@@ -1,0 +1,16 @@
+import fs from 'node:fs';
+import vm from 'node:vm';
+import assert from 'node:assert/strict';
+import ts from 'typescript';
+const code=ts.transpileModule(fs.readFileSync('src/playbackQueue.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS}}).outputText;
+const context={exports:{}};vm.runInNewContext(code,context);
+const next=context.exports.nextTrack;
+const queue=[{url:'a',name:'A'},{url:'b',name:'B'}];
+assert.equal(next(queue,'a','sequence'),queue[1]);
+assert.equal(next(queue,'b','sequence'),null);
+assert.equal(next(queue,'b','single'),queue[1]);
+assert.equal(next(queue,'b','list'),queue[0]);
+assert.equal(next([queue[0]],'a','list'),queue[0]);
+assert.equal(next([],'a','list'),null);
+assert.equal(next(queue,'missing','list'),null);
+console.log('Sequential stop, repeat-one, repeat-list, single-item and missing-track checks passed.');

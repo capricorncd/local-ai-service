@@ -1,0 +1,34 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Local AI Service",
+  "version": "0.1.0",
+  "identifier": "studio.local-ai.manager",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://127.0.0.1:1420",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Local AI · 服务管理",
+        "width": 1380,
+        "height": 920,
+        "minWidth": 1060,
+        "minHeight": 740,
+        "backgroundColor": "#f4f6f8",
+        "dragDropEnabled": false
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; connect-src 'self' ipc: http://ipc.localhost http://127.0.0.1:*; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self' blob: http://127.0.0.1:*; font-src 'self' data:"
+    }
+  },
+  "bundle": {
+    "active": false,
+    "resources": {
+      "../server/": "server/"
+    }
+  }
+}
