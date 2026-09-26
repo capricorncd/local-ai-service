@@ -7,4 +7,28 @@
 
 .model-path-picker{display:flex;align-items:center;gap:8px}.model-path-picker input{flex:1;min-width:0}.model-path-picker button{flex-shrink:0}
 
+.image-settings-tabs{display:flex;gap:6px;border-bottom:1px solid var(--ui-border);margin-bottom:20px;padding-bottom:10px;flex-wrap:wrap}
+.image-settings-tabs button{padding:10px 16px;border-radius:7px;border:1px solid transparent;color:var(--ui-muted)}
+.image-settings-tabs button[aria-selected=true]{color:var(--ui-accent-text);background:var(--ui-accent-soft);border-color:var(--ui-accent)}
+.image-settings-tabs button:focus-visible{outline:2px solid var(--ui-accent);outline-offset:2px}
+.image-settings [role=tabpanel][hidden]{display:none}
+.image-settings .model-fields{display:flex;flex-direction:column;gap:20px}
+.image-settings label{display:flex;flex-direction:column;gap:8px}
+.image-settings .settings-help{color:var(--ui-muted);line-height:1.7;margin:0 0 20px}
+.image-settings .required-mark{font-size:11px;font-weight:400;color:var(--ui-danger);margin-left:5px}
+.image-settings .field-error,.image-settings .field-status.invalid{color:var(--ui-danger)}
+.image-settings .field-error{line-height:1.5;overflow-wrap:anywhere}
+.image-settings input[aria-invalid=true]{border-color:var(--ui-danger);box-shadow:0 0 0 1px var(--ui-danger)}
+.image-settings input.field-pending{border-color:var(--ui-warning);box-shadow:0 0 0 1px var(--ui-warning)}
+.image-settings input[aria-invalid=true]:focus-visible{outline:2px solid var(--ui-danger);outline-offset:2px}
+.image-settings input.field-pending:focus-visible{outline:2px solid var(--ui-warning);outline-offset:2px}
+
+.ui-dialog:has(.image-settings){height:min(720px,85dvh)}
+.ui-dialog:has(.image-settings) .ui-dialog-layout{height:100%}
+.ui-dialog:has(.image-settings) .ui-dialog-body{display:flex;overflow:hidden}
+.ui-dialog:has(.image-settings) .ui-dialog-footer{display:flex;min-height:76px;box-sizing:border-box}
+.image-settings{display:flex;flex-direction:column;flex:1;min-width:0;min-height:0}
+.image-settings-tabs{flex-shrink:0}
+.image-settings>[role=tabpanel]{flex:1;min-height:0;overflow:auto;scrollbar-gutter:stable;padding:3px}
+
 .canvas-bar .ui-autocomplete{width:5.5rem}.canvas-bar .ui-autocomplete>input{padding:.1875rem}.section-title>.ui-autocomplete{max-width:9.375rem}.section-title>.ui-autocomplete>input{font-size:.6875rem}

@@ -1,7 +1,7 @@
 import {AutocompleteSelect} from '@local-ai/ui';
 import {confirmAction} from '../../../packages/ui/src/confirm';
-import {Dialog,DialogActions,InfoTip} from '../../../packages/ui/src/Dialog';
-import {AppearanceSettings,initializeTheme} from '../../../packages/ui/src/index';
+import {Dialog,InfoTip} from '../../../packages/ui/src/Dialog';
+import {initializeTheme} from '../../../packages/ui/src/index';
 import React,{useEffect,useRef,useState} from 'react';
 import {createRoot} from 'react-dom/client';
 import {invoke,isTauri} from '@tauri-apps/api/core';
@@ -11,7 +11,7 @@ import '../../../packages/ui/src/styles.css';
 import {api,connect,download,request,upload} from './api';
 import {type Layer,type Project,type Mode,modes,emptyProject,parseProject,dataURL,loadImage,renderLayers,canvasBlob} from './project';
 import './style.css';
-import {ModelConfiguration} from './ModelConfiguration';
+import {ImageSettings} from './ImageSettings';
 import {RecentOperations} from './RecentOperations';
 
 type Job={id:string;created:number;status:string;progress:number;file:string|null;error:string|null;request:{mode:Mode;prompt:string;seed:number}};
@@ -56,7 +56,7 @@ function App(){
     <section className="generation"><label>操作<AutocompleteSelect value={p.mode} onChange={e=>{const mode=e.target.value as Mode;patch({mode,...(mode==='panorama'?{width:2048,height:1024,mask:null}:{})});if(mode==='brush'||mode==='circle')setTool(mode);}}>{Object.entries(modes).map(([k,v])=><option key={k} value={k}>{v}</option>)}</AutocompleteSelect></label><label>提示词<textarea rows={5} placeholder="描述要生成的画面，或如何修改选中的参考图层…" value={p.prompt} onChange={e=>setP({...p,prompt:e.target.value})}/></label><p className="hint">{p.layers.filter(l=>l.visible&&l.reference).length} 个可见图层参与生成 · 图层按从底到顶对应参考图 1、2…</p><details><summary>生成参数 <ChevronDown size={14}/></summary><label>负面提示词<input value={p.negative} onChange={e=>setP({...p,negative:e.target.value})}/></label><div className="fields"><label>步数<input type="number" min="1" max="80" value={p.steps} onChange={e=>setP({...p,steps:+e.target.value})}/></label><label>引导强度<input type="number" min="1" max="10" step="0.5" value={p.cfg} onChange={e=>setP({...p,cfg:+e.target.value})}/></label></div><label>种子（-1 随机）<input type="number" value={p.seed} onChange={e=>setP({...p,seed:+e.target.value})}/></label></details><Button variant="primary" disabled={busy||!connected||!p.prompt.trim()} onClick={()=>void generate()}>{busy?<Loader2 size={18} className="spin"/>:<Sparkles size={18}/>}生成</Button></section>
    </aside>
   </div>
-  {settings&&<Dialog title="模型与服务" onClose={()=>setSettings(false)} info={<InfoTip text="接口地址：127.0.0.1:19877 · 模型按需加载，任务结束释放显存。"/>}><AppearanceSettings dialogActions/>{!isTauri()&&<label>API Token<input type="password" value={token} onChange={e=>setToken(e.target.value)}/><DialogActions><Button onClick={()=>{sessionStorage.setItem('image-token',token);void connect().then(()=>api('/v1/config')).then(setConfig).catch(notify);}}>连接</Button></DialogActions></label>}{config?<><ModelConfiguration value={config} onSaved={setConfig} notify={notify}/></>:<p>等待服务连接…</p>}</Dialog>}
+  {settings&&<Dialog title="模型与服务" onClose={()=>setSettings(false)} info={<InfoTip text="接口地址：127.0.0.1:19877 · 模型按需加载，任务结束释放显存。"/>}><ImageSettings config={config} onSaved={setConfig} token={token} setToken={setToken} notify={notify} onConnect={()=>{sessionStorage.setItem('image-token',token);void connect().then(()=>api('/v1/config')).then(setConfig).catch(notify);}}/></Dialog>}
   {message&&<Toast close={()=>setMessage('')}>{message}</Toast>}
   <input hidden ref={file} type="file" accept="image/png,image/jpeg,image/webp" multiple onChange={e=>{if(e.target.files)void addFiles(e.target.files);e.target.value='';}}/>
   <input hidden ref={projectFile} type="file" accept=".laimage,.json" onChange={e=>{const f=e.target.files?.[0];if(f)void importProject(f);e.target.value='';}}/>
