@@ -127,3 +127,6 @@ aside nav{min-height:0;overflow-y:auto;flex:1}.sidebar-foot{flex-shrink:0;margin
 .music-workspace :is(.music-composer-body,.music-song-panel)::-webkit-scrollbar-thumb:hover{background-color:var(--ui-muted)}
 .music-workspace :is(.music-composer-body,.music-song-panel)::-webkit-scrollbar-button{display:none;width:0;height:0}
 .music-workspace :is(.music-composer-body,.music-song-panel)::-webkit-scrollbar-corner{background:transparent}
+
+.song-title .song-title-tag{flex-shrink:0;align-self:center;white-space:nowrap;font-weight:500;line-height:1.4;background:var(--ui-raised);color:var(--ui-muted)}
+.song-title .song-title-tag.unplayed{background:var(--ui-accent);color:var(--ui-on-accent);font-weight:600}
