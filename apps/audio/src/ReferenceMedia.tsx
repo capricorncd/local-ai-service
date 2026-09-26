@@ -1,4 +1,6 @@
-import {useEffect, useRef, useState} from 'react';
+import {InfoTip} from './InfoTip';
+import {ApiReadyContext} from './ApiReadyContext';
+import {useContext, useEffect, useRef, useState} from 'react';
 import {Upload, X} from 'lucide-react';
 import {t} from './i18n';
 
@@ -15,10 +17,14 @@ export function uploadReference(file: File, api: Api) {
   return pending;
 }
 
-export function ReferenceMedia({file, onChange, disabled = false, api, service, label}: {
+export function ReferenceMedia({file, onChange, disabled = false, api, service, label, help}: {
   file: File|null; onChange: (file: File|null) => void; disabled?: boolean;
-  api: Api; service: 'music'|'tts'|'vc'|'auk'|'denoise'|'separation'; label?: string;
+  api: Api; service: 'music'|'tts'|'vc'|'auk'|'denoise'|'separation'; label?: string; help?: string;
 }) {
+  const apiReady = useContext(ApiReadyContext);
+  const video = !!file && /\.(mp4|mov|mkv|webm|avi)$/i.test(file.name);
+  const canPreview = !video || apiReady;
+  const [retry,setRetry] = useState(0);
   const [dragging,setDragging] = useState(false);
   const [error,setError] = useState('');
   const [preview,setPreview] = useState('');
@@ -26,8 +32,8 @@ export function ReferenceMedia({file, onChange, disabled = false, api, service, 
   const apiRef = useRef(api); apiRef.current = api;
   useEffect(() => {
     let cancelled = false, url = '';
-    setPreview(''); setError(''); setLoading(!!file);
-    if (file) (async () => {
+    setPreview(''); setError(''); setLoading(!!file && canPreview);
+    if (file && canPreview) (async () => {
       try {
         if (/\.(mp4|mov|mkv|webm|avi)$/i.test(file.name)) {
           const id = await uploadReference(file, apiRef.current);
@@ -42,7 +48,7 @@ export function ReferenceMedia({file, onChange, disabled = false, api, service, 
       finally { if (!cancelled) setLoading(false); }
     })();
     return () => { cancelled = true; if (url) URL.revokeObjectURL(url); };
-  }, [file,service]);
+  }, [file,service,canPreview,retry]);
   function choose(files: FileList|null) {
     setDragging(false);
     if (disabled || !files?.length) return;
@@ -59,9 +65,10 @@ export function ReferenceMedia({file, onChange, disabled = false, api, service, 
       <Upload size={22}/><strong>{file?.name || t('拖入音频或视频，或点击上传')}</strong>
       <p>{file ? `${(file.size/1024/1024).toFixed(1)} MB` : 'WAV / MP3 / FLAC / MP4 / MOV / MKV / WEBM / AVI · ≤ 512 MB'}</p>
     </label>
+    {file && !canPreview && <p role="status">{t('等待 API 连接，连接后将自动准备预览。')}</p>}
     {loading && <p role="status">{t('正在准备音频预览…')}</p>}
     {file && <div className="reference-preview">{preview && <audio controls src={preview} onError={()=>setError('音频预览失败，可尝试其他格式')}/>}<button type="button" className="text-button" disabled={disabled} onClick={()=>onChange(null)}><X size={14}/>{t('移除参考音频')}</button></div>}
-    <p className="muted">{service === 'music' && file && /\.(mp4|mov|mkv|webm|avi)$/i.test(file.name) ? t('最多试听 15 分钟，上传文件未截断；生成歌谱与歌曲改编使用完整音轨，最长 15 分钟。') : t('视频仅使用第一条音轨，最多试听 15 分钟；正式处理仍使用原文件及模型的时长限制。')}</p>
-    {error && <p role="alert" className="song-error">{t(error)}</p>}
+    <span className="reference-info"><InfoTip text={[service === 'music' && file && /\.(mp4|mov|mkv|webm|avi)$/i.test(file.name) ? t('最多试听 15 分钟，上传文件未截断；生成歌谱与歌曲改编使用完整音轨，最长 15 分钟。') : t('视频仅使用第一条音轨，最多试听 15 分钟；正式处理仍使用原文件及模型的时长限制。'), help].filter(Boolean).join('\n\n')}/></span>
+    {error && <><p role="alert" className="song-error">{t(error)}</p>{file && <button type="button" className="button light" disabled={loading || !canPreview} onClick={()=>setRetry(value=>value+1)}>{t('重试预览')}</button>}</>}
   </section>;
 }
