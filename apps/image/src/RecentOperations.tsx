@@ -1,3 +1,5 @@
+import {confirmAction} from '../../../packages/ui/src/confirm';
+import {Dialog,InfoTip} from '../../../packages/ui/src/Dialog';
 import {useEffect,useRef,useState} from 'react';
 import {History,Loader2,X} from 'lucide-react';
 import {isTauri} from '@tauri-apps/api/core';
@@ -9,6 +11,7 @@ import {loadImage,modes,parseProject,type Project} from './project';
 type RecordItem={id:string;created:number;name:string;mode:Project['mode'];prompt:string;layers:number};
 export function RecentOperations({project,connected,restore,notify}:{project:Project;connected:boolean;restore:(p:Project)=>void;notify:(e:unknown)=>void}) {
   const [open,setOpen]=useState(false),[records,setRecords]=useState<RecordItem[]>([]),[loading,setLoading]=useState(false),[opening,setOpening]=useState(false),[status,setStatus]=useState('');
+  const [selectedId,setSelectedId]=useState('');
   const current=useRef(project),initial=useRef(project),recovered=useRef(false),timer=useRef<ReturnType<typeof setTimeout>|undefined>(undefined),queue=useRef<Promise<unknown>>(Promise.resolve()),restored=useRef<Project|null>(null),closed=useRef(false);
   current.current=project;
   const meaningful=(p:Project)=>p!==initial.current||p.layers.length>0||p.prompt.trim()!==''||p.mask!==null||p.name!=='未命名工程';
@@ -50,12 +53,12 @@ export function RecentOperations({project,connected,restore,notify}:{project:Pro
       if(closed.current)return;
       closed.current=true;
       try {await save(current.current);await getCurrentWindow().destroy();}
-      catch(e){closed.current=false;notify(e);if(confirm('最近记录保存失败。是否仍然关闭？未保存内容可先导出工程。'))await getCurrentWindow().destroy();}
+      catch(e){closed.current=false;notify(e);if(await confirmAction('最近记录保存失败。是否仍然关闭？未保存内容可先导出工程。'))await getCurrentWindow().destroy();}
     }).then(fn=>{if(unmounted)fn();else dispose=fn;});
     return()=>{unmounted=true;dispose?.();};
   },[]);
   async function show() {
-    setOpen(true);setLoading(true);
+    setOpen(true);setSelectedId('');setLoading(true);
     try {await save(current.current);setRecords(await api<RecordItem[]>('/v1/recents'));}
     catch(e){notify(e);}finally{setLoading(false);}
   }
@@ -71,13 +74,11 @@ export function RecentOperations({project,connected,restore,notify}:{project:Pro
     }catch(e){notify(e);}finally{setOpening(false);}
   }
   return <><Button onClick={()=>void show()} title={`最近 30 条操作记录${status?' · '+status:''}`}><History size={16}/>最近记录{status&&<span className={`autosave-dot ${status.includes('失败')?'failed':status.includes('保存…')?'pending':''}`} role="status" aria-label={status}/>}</Button>
-    {open&&<div className="modal-backdrop"><section className="settings panel recent-panel" role="dialog" aria-modal="true" aria-label="最近操作记录">
-      <div className="section-title"><h2>最近记录 <small>{records.length} / 30</small></h2><button disabled={opening} aria-label="关闭最近记录" onClick={()=>setOpen(false)}><X/></button></div>
-      <p className="hint">编辑停顿后自动保存，保留最近 30 条。点击恢复当时的完整操作内容。<br/>{status}</p>
-      {loading?<p><Loader2 size={16} className="spin"/> 正在读取…</p>:!records.length?<p className="muted">暂无记录，添加图片或输入提示词后会自动保存。</p>:<div className="recent-list">{records.map(r=><button key={r.id} disabled={opening} className="recent-entry" onClick={()=>void select(r.id)}>
+    {open&&<Dialog title={<>最近记录 <small>{records.length} / 30</small></>} onClose={()=>{if(!opening)setOpen(false);}} info={<InfoTip text="编辑停顿后自动保存，保留最近 30 条。选择记录后，点击底部按钮恢复当时的完整操作内容。"/>} footer={<><span role="status" style={{marginRight:'auto'}}>{status}</span><Button disabled={opening} onClick={()=>setOpen(false)}>取消</Button><Button variant="primary" disabled={opening||!selectedId||loading} onClick={()=>void select(selectedId)}>{opening?'恢复中…':'恢复记录'}</Button></>}>
+      {loading?<p><Loader2 size={16} className="spin"/> 正在读取…</p>:!records.length?<p className="muted">暂无记录，添加图片或输入提示词后会自动保存。</p>:<div className="recent-list">{records.map(r=><button key={r.id} disabled={opening} className="recent-entry" aria-pressed={selectedId===r.id} onClick={()=>setSelectedId(r.id)}>
         <div><strong>{r.name}</strong><time>{new Date(r.created*1000).toLocaleString()}</time></div>
         <span>{modes[r.mode]} · {r.layers} 个图层</span><p>{r.prompt||'未填写提示词'}</p>
       </button>)}</div>}
-    </section></div>}
+    </Dialog>}
   </>;
 }

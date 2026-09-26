@@ -1,3 +1,5 @@
+import {Dialog,InfoTip} from '../../../packages/ui/src/Dialog';
+import {Children,isValidElement,type ReactElement} from 'react';
 import {MentionEditor,type MentionEditorHandle} from './MentionEditor';
 import {mentionIds} from './mentionText';
 import {createPortal} from 'react-dom';
@@ -6,10 +8,10 @@ import {X,Image as ImageIcon} from 'lucide-react';
 import {request} from './api';
 import {Asset} from './types';
 
-export function Modal({title,children,onClose,wide=false}:{title:string;children:ReactNode;onClose:()=>void;wide?:boolean}){
-  const ref=useRef<HTMLDialogElement>(null);
-  useEffect(()=>{ref.current?.showModal();},[]);
-  return <dialog ref={ref} className={wide?'modal wide':'modal'} onCancel={e=>{e.preventDefault();onClose();}}><div className="modal-title"><h2>{title}</h2><button aria-label="关闭" onClick={onClose}><X size="1.125rem"/></button></div>{children}</dialog>;
+export function Modal({title,children,onClose,wide=false,footer}:{title:string;children:ReactNode;onClose:()=>void;wide?:boolean;footer?:ReactNode}){
+ const content=Children.toArray(children),isActions=(node:ReactNode)=>isValidElement<{className?:string}>(node)&&node.props.className==='actions';
+ const hints=content.filter(node=>isValidElement<{className?:string}>(node)&&node.props.className==='hint');
+ return <Dialog title={title} wide={wide} onClose={onClose} footer={footer??content.filter(isActions)} info={hints.map((node,i)=><InfoTip key={i} text={String((node as ReactElement<{children:ReactNode}>).props.children)}/>)}>{content.filter(node=>!isActions(node)&&!hints.includes(node))}</Dialog>;
 }
 export function Media({pid,path,audio=false,className=''}:{pid:string;path:string;audio?:boolean;className?:string}){
   const [url,setUrl]=useState(''),[error,setError]=useState('');

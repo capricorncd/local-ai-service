@@ -1,3 +1,4 @@
+import {DialogActions} from '../../../packages/ui/src/Dialog';
 import {useEffect, useState} from 'react';
 import {Check, FolderOpen, Loader2, X} from 'lucide-react';
 import {open} from '@tauri-apps/plugin-dialog';
@@ -44,8 +45,8 @@ export function ModelConfiguration({value,onSaved,notify}:{value:Result;onSaved:
       <span className="field-label"><span>{label}</span>{status(key)}</span>
       <div className="model-path-picker"><input value={draft[key]} disabled={saving} onChange={e=>setDraft({...draft,[key]:e.target.value})}/><Button disabled={saving} aria-label={`选择${label}`} onClick={()=>void browse(key)}><FolderOpen size={16}/></Button></div>
     </label>)}</div>
-    <footer className="settings-actions"><Button variant="primary" disabled={saving} onClick={()=>void save()}>
+    <DialogActions><Button variant="primary" disabled={saving} onClick={()=>void save()}>
       {saving&&<Loader2 size={15} className="spin"/>}{saving?'保存中…':'保存配置'}
-    </Button></footer>
+    </Button></DialogActions>
   </>;
 }

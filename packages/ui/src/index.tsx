@@ -18,3 +18,5 @@ export function RevealFileAction({path,reveal,label,title,errorText}:{path?:stri
 
 export {AppearanceSettings} from './AppearanceSettings';
 export {initializeTheme} from './theme';
+
+export {Dialog,DialogActions,InfoTip} from './Dialog';
