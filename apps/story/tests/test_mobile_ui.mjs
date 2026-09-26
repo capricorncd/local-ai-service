@@ -1,0 +1,34 @@
+import assert from 'node:assert/strict';
+import {JSDOM} from 'jsdom';
+import {build} from 'esbuild';
+import {rm} from 'node:fs/promises';
+const dom=new JSDOM('<div id="test-root"></div>',{url:'http://192.168.1.10:19879/mobile',pretendToBeVisual:true});
+for(const key of ['window','document','navigator','HTMLElement','Event','KeyboardEvent','localStorage','sessionStorage','location','history'])Object.defineProperty(globalThis,key,{value:dom.window[key],configurable:true});
+window.matchMedia=()=>({matches:false,addEventListener(){},removeEventListener(){}});
+globalThis.matchMedia=window.matchMedia;globalThis.getComputedStyle=window.getComputedStyle.bind(window);globalThis.IS_REACT_ACT_ENVIRONMENT=true;
+localStorage.setItem('story-mobile-token','phone-test-token');
+let project={format:'local-ai-story',version:1,id:'a'.repeat(32),name:'手机测试',revision:0,updated:'',width:1376,height:768,fps:24,style:'',chapters:[{id:'chapter',title:'第一季',episodes:[{id:'episode',title:'第 1 话',kind:'episode',script:'原始剧本',shots:[]}]}],assets:[]};
+const writes=[];
+globalThis.fetch=async(url,init)=>{const path=new URL(url,location.origin).pathname;assert.equal(new Headers(init?.headers).get('Authorization'),'Bearer phone-test-token');let value;if(path==='/v1/session')value={id:'phone',name:'手机'};else if(path==='/v1/projects')value=[{id:project.id,name:project.name,episodes:1}];else if(path==='/v1/projects/'+project.id){if(init?.method==='PUT'){const draft=JSON.parse(init.body);writes.push(draft);project={...draft,revision:project.revision+1};}value=project;}else if(path.endsWith('/history'))value=[];else throw Error('Unexpected '+path);return new Response(JSON.stringify(value),{headers:{'Content-Type':'application/json'}});};
+const {default:React,act}=await import('react');const {createRoot}=await import('react-dom/client');
+const out=new URL('./.mobile-ui-test.mjs',import.meta.url);
+await build({entryPoints:['apps/story/src/mobile.tsx'],outfile:out.pathname.replace(/^\/([A-Za-z]:)/,'$1'),bundle:true,format:'esm',platform:'node',packages:'external',alias:{'@local-ai/ui':'./packages/ui/src/index.tsx'},jsx:'automatic',loader:{'.css':'empty'}});
+let root;
+try{
+ const {MobileApp}=await import(out.href);root=createRoot(document.getElementById('test-root'));
+ await act(async()=>{root.render(React.createElement(MobileApp));await new Promise(r=>setTimeout(r,20));});
+ const click=async text=>{const button=[...document.querySelectorAll('button')].find(b=>b.textContent.includes(text));assert(button,'Missing '+text);await act(async()=>{button.click();await new Promise(r=>setTimeout(r,20));});};
+ await click('手机测试');assert(document.querySelector('.mobile-script'));
+ const textarea=document.querySelector('.mobile-script');
+ await act(()=>{Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype,'value').set.call(textarea,'手机修改后的剧本');textarea.dispatchEvent(new Event('input',{bubbles:true}));});
+ await act(()=>new Promise(r=>setTimeout(r,1050)));
+ assert.equal(writes.at(-1).chapters[0].episodes[0].script,'手机修改后的剧本');assert(document.querySelector('.mobile-header').textContent.includes('已保存'));
+ window.prompt=()=> '第二季';await click('新增章节');assert(document.querySelector('input[aria-label="章节"]').value==='第二季');
+ window.prompt=()=> '第 2 话';await click('新增一话');
+ await click('分镜');await click('添加镜头');assert.equal(document.querySelector('input[aria-label="时长（秒）"]').value,'5');assert.equal(document.querySelector('input[aria-label="时长（帧）"]').value,'0');
+ await act(()=>new Promise(r=>setTimeout(r,1050)));
+ assert.equal(writes.at(-1).chapters[1].episodes[0].shots.length,1);assert.equal(writes.at(-1).chapters[0].episodes[0].shots.length,0);
+ await click('资产');await click('新增资产');await act(()=>new Promise(r=>setTimeout(r,1050)));assert.equal(writes.at(-1).assets.length,1);
+ assert.equal(document.querySelectorAll('select').length,0);
+ console.log('Mobile UI: authenticated navigation, script autosave, empty chapter selection, episode/shot creation, seconds/frames and asset editing passed');
+}finally{if(root)await act(()=>root.unmount());await rm(out,{force:true});dom.window.close();}

@@ -387,5 +387,7 @@ def create_app(home: Path):
         if not e.shots: raise HTTPException(422,'当前话还没有分镜')
         result,board,files,warnings=export_timeline(p,e,store,group)
         return Response(bundle(result,board,files,warnings),media_type='application/zip',headers={'Content-Disposition':'attachment; filename="timeline.zip"'})
+    from mobile import register_mobile
+    register_mobile(app,store,secured)
     register_agent_api(app,store,secured)
     return app

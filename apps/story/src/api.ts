@@ -25,3 +25,5 @@ export async function download(blob:Blob,name:string){
   if(isTauri()){const path=await save({defaultPath:name});if(path)await invoke('save_download',new Uint8Array(await blob.arrayBuffer()),{headers:{'x-save-path':JSON.stringify(path)}});}
   else{const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 }
+
+export function setMobileToken(token:string){localStorage.setItem("story-mobile-token",token);connection={base:location.origin,token};}

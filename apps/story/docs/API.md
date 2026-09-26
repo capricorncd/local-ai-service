@@ -138,3 +138,18 @@ print(response.json()['ids'])
 创建项目 `POST /v1/projects/open` 只需 `{"name":"剧名"}`；`directory` 可选。`PUT /v1/settings` 的 `project_directory` 设置新项目素材根目录，留空使用应用数据目录。正文与历史保存在 `story.sqlite3`。提供目录但不提供 name 时，打开已登记项目或导入旧版 story.json。
 
 `GET /v1/system/fonts`：读取本机安装的字体族，返回 `{ "fonts": ["Arial", "Microsoft YaHei"], "available": true }`。沿用 Bearer Token 认证；非 Windows 返回空列表及 `available: false`。
+
+
+## 移动端网关
+
+电脑管理 API（仍需桌面 Bearer Token，仅回环地址）：
+
+- `GET /v1/mobile`：监听状态、可用局域网地址、待确认请求和已绑定设备。
+- `PUT /v1/mobile`：`{"enabled":true,"port":19879}`，开启 / 关闭独立局域网网关。
+- `POST /v1/mobile/pair`：`{"address":"192.168.1.10"}`，返回单次使用、5 分钟有效的绑定 URL 及 SVG 二维码。新建二维码使上一个二维码失效。
+- `POST /v1/mobile/pending/{id}`：`{"approve":true}` 确认，`false` 拒绝。
+- `POST /v1/mobile/devices/{id}/revoke`：撤销设备。
+
+移动网关（默认 19879）单独鉴权。扫描 URL 的 fragment 后，手机以 `POST /pair/claim` 提交 `code` 和 `name`，得到请求 ID 与私密轮询 secret；`POST /pair/{id}/poll` 携带 secret，电脑确认后获得设备 Token。该 Token 仅存哈希于电脑 SQLite，90 天后过期，不能用于桌面 API。
+
+移动 Bearer Token 可读取 `/v1/session`、`/v1/projects`、`/v1/projects/{id}`、项目媒体和历史版本；`PUT /v1/projects/{id}` 使用完整 Project 和最近读取的 revision 保存，版本过期返回 409，并通过 Store.save 生成历史。其他桌面功能不在移动网关注册。
