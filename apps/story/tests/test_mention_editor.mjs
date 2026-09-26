@@ -6,8 +6,9 @@ dom.window.Range.prototype.getClientRects=()=>[];dom.window.Range.prototype.getB
 const {default:React,act}=await import('react');const{createRoot}=await import('react-dom/client');
 const out=new URL('./.mention-editor-test.mjs',import.meta.url);await build({entryPoints:['apps/story/src/MentionEditor.tsx'],outfile:out.pathname.replace(/^\/([A-Za-z]:)/,'$1'),bundle:true,format:'esm',platform:'node',packages:'external',jsx:'automatic'});
 try{const{MentionEditor,clipboardPlainText}=await import(out.href);const assets=[{id:'a',name:'陈墨'},{id:'b',name:'仓库 夜'}];let value='陈墨走向 @仓库 夜。\n雨声。',writes=[];const ref=React.createRef(),root=createRoot(document.querySelector('#root'));
-const render=()=>root.render(React.createElement(MentionEditor,{ref,value,assets,onInput:(v)=>{value=v;writes.push(v);render();},onCaret(){},onEscape(){},onHover(){}}));await act(async()=>render());assert.equal(writes.length,0);assert.equal(document.querySelectorAll('.inline-asset').length,1);
+const render=()=>root.render(React.createElement('label',null,'画面与动作',React.createElement(MentionEditor,{ref,value,assets,onInput:(v)=>{value=v;writes.push(v);render();},onCaret(){},onEscape(){},onHover(){}})));await act(async()=>render());assert.equal(writes.length,0);assert.equal(document.querySelectorAll('.inline-asset').length,1);
 await act(async()=>ref.current.insert(0,2,'@[陈墨](asset:a)'));assert.equal(value,'@[陈墨](asset:a)走向 @仓库 夜。\n雨声。');assert.equal(document.querySelectorAll('.inline-asset').length,2);
+const beforeClick=value;await act(async()=>document.querySelector('.mention-input p').click());assert.equal(value,beforeClick,'Clicking editor body must not activate reference delete');
 const beforeFocus=value;const writesBeforeFocus=writes.length;
 await act(async()=>{ref.current.focus();document.querySelector('.mention-input').blur();ref.current.focus();await new Promise(resolve=>setTimeout(resolve,30));});assert.equal(value,beforeFocus);assert.equal(writes.length,writesBeforeFocus,'Focus must not save content');
 // A browser DOM reconciliation can replace inline spans while focusing/editing.
