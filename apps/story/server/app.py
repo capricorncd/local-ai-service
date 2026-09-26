@@ -38,6 +38,8 @@ class GenerateRequest(BaseModel):
     target_id: str
     prompt: str = Field(default='',max_length=10000)
     shot_ids: list[str] = Field(default_factory=list, max_length=9)
+    prompt_override: str | None = Field(default=None, min_length=1, max_length=20000)
+    revision: int | None = None
 
 
 class RestoreRequest(BaseModel):
@@ -216,6 +218,24 @@ def create_app(home: Path):
         p=Project.model_validate(store.history(id,version)['project']); p.revision=req.revision
         return store.save(id,p,'恢复历史版本')
 
+    def shot_prompt(p, req):
+        from shot_prompt import compile_shot_prompt
+        if req.revision is not None and req.revision != p.revision:
+            raise HTTPException(409, '项目已变化，请重新预览提示词')
+        e = episode(p, req.target_id) if req.kind == 'board' else None
+        shots = [s for c in p.chapters for ep in c.episodes for s in ep.shots]
+        selected = [s for s in e.shots if s.id in req.shot_ids] if e else [s for s in shots if s.id == req.target_id]
+        if not selected: raise HTTPException(422, '请先选择镜头')
+        plan = compile_shot_prompt(p, selected, store, req.kind, req.prompt)
+        return selected, plan
+
+    @app.post('/v1/projects/{id}/generation-preview', dependencies=secured)
+    def generation_preview(id: str, req: GenerateRequest):
+        if req.kind == 'asset': raise HTTPException(422, '此预览用于分镜与故事板')
+        p = store.load(id)
+        _, plan = shot_prompt(p, req)
+        return {**plan, 'revision': p.revision}
+
     @app.post('/v1/projects/{id}/generate',dependencies=secured)
     def generate(id:str,req:GenerateRequest):
         p=store.load(id); cfg=config(); base=safe_url(cfg.image_url,True)
@@ -228,17 +248,10 @@ def create_app(home: Path):
             prompt=f'{p.style}\n{asset.name}设定图。{description}\n{req.prompt}'.strip()
             refs=[asset] if asset.image else []
         else:
-            e=episode(p,req.target_id) if req.kind=='board' else None
-            all_shots=[s for c in p.chapters for e2 in c.episodes for s in e2.shots]
-            selected=([s for s in e.shots if s.id in req.shot_ids] if e else [s for s in all_shots if s.id==req.target_id])
-            if not selected: raise HTTPException(422,'请先选择镜头')
-            references=list(dict.fromkeys(aid for s in selected for aid in s.asset_ids))
-            refs=[next(a for a in p.assets if a.id==aid) for aid in references]
-            prompt=p.style+'\n'
-            if req.kind=='board': prompt+=f'连续故事板，共{len(selected)}格，按镜头顺序从左到右、从上到下排列，保持人物服饰、道具和场景一致。\n'
-            for n,s in enumerate(selected,1):
-                prompt+=f'画面{n}：{s.scene}，{s.shot_size}，{s.angle}，{s.lighting}。{s.description}\n'
-            prompt+=req.prompt
+            selected, plan = shot_prompt(p, req)
+            refs = [next(a for a in p.assets if a.id == r['id']) for r in plan['references']]
+            prompt = req.prompt_override if req.prompt_override is not None else plan['prompt']
+        if not prompt.strip() or len(prompt)>20000: raise HTTPException(422, '生成提示词不能为空或超过20000字符，请先预览并精简')
         uploaded=[]; reference_records=[]
         with httpx.Client(timeout=60,trust_env=False,headers=image_headers(cfg)) as client:
             for a in refs:
@@ -246,30 +259,35 @@ def create_app(home: Path):
                 constraints=a.constraints
                 if a.image:
                     path=store.media(id,a.image)
-                    record=image_metadata.read(path) if path.suffix.lower()=='.png' else None
-                    if record and record.get('schema_version')==1:
+                    record=image_metadata.read(path) if req.kind=='asset' and path.suffix.lower()=='.png' else None
+                    if req.kind=='asset' and record and record.get('schema_version')==1:
                         description=record.get('setting_description') or description
                         constraints='；'.join(record.get('consistency_constraints',[])) or constraints
                     with path.open('rb') as f:
                         res=checked(client.post(base+'/v1/images',files={'file':(path.name,f)})).json()
                     uploaded.append(res['id'])
-                    prompt+=f'\n参考图{len(uploaded)}：{a.name}，{description}；{constraints}'
+                    if req.kind=='asset': prompt+=f'\n参考图{len(uploaded)}：{a.name}，{description}；{constraints}'
                     reference_records.append({'filename':a.image,'role':a.kind})
-                else: prompt+=f'\n{a.name}：{description}；{constraints}'
+                elif req.kind=='asset': prompt+=f'\n{a.name}：{description}；{constraints}'
             if len(uploaded)>10: raise HTTPException(422,'单次最多引用10张设定图，请减少引用资产')
-            for a in p.assets: prompt=prompt.replace(f'@[{a.name}](asset:{a.id})',a.name).replace('@'+a.name,a.name)
-            mode='fidelity' if uploaded else 'text'
+            if req.kind=='asset':
+                for a in p.assets: prompt=prompt.replace(f'@[{a.name}](asset:{a.id})',a.name).replace('@'+a.name,a.name)
+            mode=('fidelity' if uploaded else 'text') if req.kind=='asset' else plan['mode']
             width,height=storyboard_image_size(p.width,p.height,cfg.storyboard_max_edge) if req.kind in ('shot','board') else (p.width,p.height)
             payload={'mode':mode,'prompt':prompt.strip(),'references':uploaded,'width':width,'height':height,'steps':cfg.steps,'cfg':cfg.cfg,'seed':-1}
             response=checked(client.post(base+'/v1/jobs',json=payload)).json()
         jid=uid()
         # image application's fidelity mode prepends this exact instruction.
-        actual=('Preserve the exact identity, face, product shape, materials, lettering and distinguishing features of the reference subjects.\n' if uploaded else '')+payload['prompt']
+        from shot_prompt import PREFIXES
+        actual=(PREFIXES[mode]+'\n' if PREFIXES[mode] else '')+payload['prompt']
         record={'schema_version':1,'asset_name':asset.name if asset else '分镜效果图','asset_type':asset.kind if asset else 'image','generation_prompt':actual,
-            'generation_prompt_status':'exact','generation_prompt_source':'Local AI Image /v1/jobs; fidelity prefix included when applicable','generation_mode':'external','reference_images':reference_records}
+            'generation_prompt_status':'exact','generation_prompt_source':'Local AI Image /v1/jobs; mode prefix included when applicable','generation_mode':'external','reference_images':reference_records}
         if asset:
             record.update(setting_description=description,consistency_constraints=[asset.constraints] if asset.constraints else [],description_source='用户填写的设定描述，生成后须人工核对',observed_differences=[])
         job={'id':jid,'created_at':time.time(),'remote_id':response['id'],'base':base,'kind':req.kind,'target_id':req.target_id,'status':response['status'],'metadata':record,'path':'','prompt':payload['prompt']}
+        if req.kind!='asset':
+            job['warnings']=plan['warnings']
+            job['reference_plan']=plan['references']
         if req.kind=='shot': job['previous_image']=selected[0].image
         atomic_json(job_path(id,jid),job)
         return job
