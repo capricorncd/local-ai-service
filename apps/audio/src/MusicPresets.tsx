@@ -1,15 +1,25 @@
+import {useState} from 'react';
 import {useDraft} from './useDraft';
 import {Sparkles} from 'lucide-react';
 import {t} from './i18n';
 
 import styleData from '../server/music_styles.json';
-export const musicStyles = styleData;
+import genreData from '../server/yue2_genre_styles.json';
+const normalizedGenres = genreData.map(item=>({...item,prompt:styleData.find(([name])=>name===item.name)?.[1] || item.prompt}));
+const genreStyles = normalizedGenres.filter(item=>!styleData.some(([name])=>name===item.name));
+export const musicStyles = [...styleData,...genreStyles.map(item=>[item.name,item.prompt])];
 
 export function MusicPresets({style, hasReference, disabled, apply, duration, setDuration}: {
   style:string; hasReference:boolean; disabled:boolean;
   apply:(style:string, instrumental:boolean, vocal:boolean)=>void;
   duration:string; setDuration:(value:string)=>void;
 }) {
+  const [search,setSearch]=useState('');
+  const [category,setCategory]=useState('常用风格');
+  const categories=['常用风格','全部风格',...new Set(genreData.map(item=>item.category))];
+  const commonStyles=styleData.map(([name,prompt])=>({name,prompt,genre:''}));
+  const choices=category==='常用风格'?commonStyles:category==='全部风格'?[...commonStyles,...genreStyles]:normalizedGenres.filter(item=>item.category===category);
+  const visibleStyles=choices.filter(item=>`${item.name} ${t(item.name)} ${item.genre} ${item.prompt}`.toLowerCase().includes(search.trim().toLowerCase()));
   const [goal,setGoal]=useDraft('MusicPresets.tsx:goal', 'new');
   const [genre,setGenre]=useDraft('MusicPresets.tsx:genre', '');
   const [bpm,setBpm]=useDraft('MusicPresets.tsx:bpm', '');
@@ -44,7 +54,8 @@ export function MusicPresets({style, hasReference, disabled, apply, duration, se
       <label>{t('人声偏好')}<select value={voice} disabled={disabled||['arrange','tempo','bgm','male','female'].includes(goal)} onChange={e=>setVoice(e.target.value)}><option value="keep">{t('不指定')}</option><option value="instrumental">{t('纯音乐 BGM')}</option><option value="male">{t('男声版本')}</option><option value="female">{t('女声版本')}</option></select></label>
       <label>{t('目标 BPM（可选）')}<input type="number" min={30} max={300} step={1} value={bpm} disabled={disabled} onChange={e=>setBpm(e.target.value)}/></label>
       <label>{t('目标时长 / 分钟')}<input type="number" min={.1} max={15} step={.1} value={duration} disabled={disabled} placeholder={t('使用服务默认值')} onChange={e=>setDuration(e.target.value)}/></label>
-    </div><div className="preset-styles">{musicStyles.map(([name,prompt])=><button type="button" disabled={disabled} className={`button light ${genre===name?'active':''}`} key={name} onClick={()=>{setGenre(name);apply(prompt,false,false);}}>{t(name)}</button>)}</div>
+    </div><div className="form-grid"><label>{t('风格分类')}<select value={category} onChange={e=>setCategory(e.target.value)}>{categories.map(name=><option key={name} value={name}>{t(name)}</option>)}</select></label><label>{t('搜索风格')}<input value={search} onChange={e=>setSearch(e.target.value)} placeholder={t('搜索名称、乐器或英文曲风')}/></label></div><div className="preset-styles">{visibleStyles.map(({name,prompt})=><button type="button" disabled={disabled} className={`button light ${genre===name?'active':''}`} key={name} onClick={()=>{setGenre(name);apply(prompt,false,false);}}>{t(name)}</button>)}</div>
+    {visibleStyles.length===0&&<p className="muted">{t('没有匹配的风格')}</p>}
     <p className="muted">{t('风格按钮替换风格输入；应用预设会组合目标、风格和参数。纯音乐预设将歌词替换为 [Instrumental]。')}</p>
     {referenceRequired&&!hasReference&&<p className="muted">{t('此预设需要先添加参考音频、视频或选择来源歌曲。')}</p>}
     <button type="button" className="button light" disabled={disabled||(referenceRequired&&!hasReference)||invalidBpm||(goal==='tempo'&&!bpm)||(!!duration&&(!Number.isFinite(Number(duration))||Number(duration)<.1||Number(duration)>15))} onClick={fill}>{t('应用创作预设')}</button>

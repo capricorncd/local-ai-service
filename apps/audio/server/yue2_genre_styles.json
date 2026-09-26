@@ -1,0 +1,422 @@
+[
+  {
+    "name": "氛围音乐",
+    "genre": "Ambient",
+    "category": "氛围与轻音乐",
+    "prompt": "Ambient, slow-moving textures, spacious layers, gradual harmonic changes"
+  },
+  {
+    "name": "暗黑氛围",
+    "genre": "Dark Ambient",
+    "category": "氛围与轻音乐",
+    "prompt": "Dark Ambient, slow-moving textures, spacious layers, gradual harmonic changes"
+  },
+  {
+    "name": "布吉伍吉",
+    "genre": "Boogie Woogie",
+    "category": "布鲁斯",
+    "prompt": "Boogie Woogie, blues phrasing, expressive guitar and piano, responsive rhythm section"
+  },
+  {
+    "name": "跳跃布鲁斯",
+    "genre": "Jump Blues",
+    "category": "布鲁斯",
+    "prompt": "Jump Blues, blues phrasing, expressive guitar and piano, responsive rhythm section"
+  },
+  {
+    "name": "灵魂布鲁斯",
+    "genre": "Soul Blues",
+    "category": "布鲁斯",
+    "prompt": "Soul Blues, blues phrasing, expressive guitar and piano, responsive rhythm section"
+  },
+  {
+    "name": "古典音乐",
+    "genre": "Classical Music",
+    "category": "古典与喜剧",
+    "prompt": "Classical Music, acoustic ensemble, developed motifs, expressive dynamics"
+  },
+  {
+    "name": "喜剧音乐",
+    "genre": "Comedy",
+    "category": "古典与喜剧",
+    "prompt": "Comedy, playful timing, surprising accents, lively arrangement"
+  },
+  {
+    "name": "蓝草",
+    "genre": "Bluegrass",
+    "category": "乡村",
+    "prompt": "Bluegrass, acoustic strings, clear melodic lines, grounded rhythm"
+  },
+  {
+    "name": "乡村流行",
+    "genre": "Country Pop",
+    "category": "乡村",
+    "prompt": "Country Pop, acoustic strings, clear melodic lines, grounded rhythm"
+  },
+  {
+    "name": "酒馆乡村",
+    "genre": "Honky Tonk",
+    "category": "乡村",
+    "prompt": "Honky Tonk, acoustic strings, clear melodic lines, grounded rhythm"
+  },
+  {
+    "name": "乡村福音",
+    "genre": "Country Gospel",
+    "category": "乡村",
+    "prompt": "Country Gospel, acoustic strings, clear melodic lines, grounded rhythm"
+  },
+  {
+    "name": "另类舞曲",
+    "genre": "Alternative Dance",
+    "category": "舞曲与电子",
+    "prompt": "Alternative Dance, dance-focused rhythm, layered percussion, distinct melodic hook"
+  },
+  {
+    "name": "舞曲流行",
+    "genre": "Dance-Pop",
+    "category": "舞曲与电子",
+    "prompt": "Dance-Pop, dance-focused rhythm, layered percussion, distinct melodic hook"
+  },
+  {
+    "name": "迪斯科",
+    "genre": "Disco",
+    "category": "舞曲与电子",
+    "prompt": "Disco, dance-focused rhythm, layered percussion, distinct melodic hook"
+  },
+  {
+    "name": "高能舞曲",
+    "genre": "Hi-NRG",
+    "category": "舞曲与电子",
+    "prompt": "Hi-NRG, dance-focused rhythm, layered percussion, distinct melodic hook"
+  },
+  {
+    "name": "意式迪斯科",
+    "genre": "Italo-Disco",
+    "category": "舞曲与电子",
+    "prompt": "Italo-Disco, dance-focused rhythm, layered percussion, distinct melodic hook"
+  },
+  {
+    "name": "新迪斯科",
+    "genre": "Nu-Disco",
+    "category": "舞曲与电子",
+    "prompt": "Nu-Disco, dance-focused rhythm, layered percussion, distinct melodic hook"
+  },
+  {
+    "name": "电子舞曲",
+    "genre": "Electronic Dance Music",
+    "category": "舞曲与电子",
+    "prompt": "Electronic Dance Music, dance-focused rhythm, layered percussion, distinct melodic hook"
+  },
+  {
+    "name": "欧陆节拍",
+    "genre": "Eurobeat",
+    "category": "舞曲与电子",
+    "prompt": "Eurobeat, dance-focused rhythm, layered percussion, distinct melodic hook"
+  },
+  {
+    "name": "Grime",
+    "genre": "Grime",
+    "category": "舞曲与电子",
+    "prompt": "Grime, dance-focused rhythm, layered percussion, distinct melodic hook"
+  },
+  {
+    "name": "轻音乐",
+    "genre": "Easy Listening",
+    "category": "氛围与轻音乐",
+    "prompt": "Easy Listening, soft piano, light accompaniment, flowing melody"
+  },
+  {
+    "name": "电子流行",
+    "genre": "Electropop",
+    "category": "舞曲与电子",
+    "prompt": "Electropop, electronic textures, synthesizer layers, detailed rhythmic patterns"
+  },
+  {
+    "name": "电子民谣",
+    "genre": "Folktronica",
+    "category": "舞曲与电子",
+    "prompt": "Folktronica, electronic textures, synthesizer layers, detailed rhythmic patterns"
+  },
+  {
+    "name": "非洲 Trap",
+    "genre": "Afro Trap",
+    "category": "嘻哈",
+    "prompt": "Afro Trap, layered drum beat, prominent bass, rhythmic phrasing"
+  },
+  {
+    "name": "工业嘻哈",
+    "genre": "Industrial Hip Hop",
+    "category": "嘻哈",
+    "prompt": "Industrial Hip Hop, layered drum beat, prominent bass, rhythmic phrasing"
+  },
+  {
+    "name": "Lo-fi 嘻哈",
+    "genre": "Lo-Fi Hip Hop",
+    "category": "嘻哈",
+    "prompt": "Lo-Fi Hip Hop, layered drum beat, prominent bass, rhythmic phrasing"
+  },
+  {
+    "name": "工业金属",
+    "genre": "Industrial Metal",
+    "category": "金属与工业",
+    "prompt": "Industrial Metal, distorted textures, forceful rhythm, mechanical accents"
+  },
+  {
+    "name": "赛博金属",
+    "genre": "Cyber Metal",
+    "category": "金属与工业",
+    "prompt": "Cyber Metal, distorted textures, forceful rhythm, mechanical accents"
+  },
+  {
+    "name": "非洲爵士",
+    "genre": "Afro-Jazz",
+    "category": "爵士",
+    "prompt": "Afro-Jazz, interactive ensemble, syncopated phrasing, rich harmonic movement"
+  },
+  {
+    "name": "大乐队爵士",
+    "genre": "Big Band",
+    "category": "爵士",
+    "prompt": "Big Band, interactive ensemble, syncopated phrasing, rich harmonic movement"
+  },
+  {
+    "name": "冷爵士",
+    "genre": "Cool Jazz",
+    "category": "爵士",
+    "prompt": "Cool Jazz, interactive ensemble, syncopated phrasing, rich harmonic movement"
+  },
+  {
+    "name": "迪克西兰爵士",
+    "genre": "Dixieland",
+    "category": "爵士",
+    "prompt": "Dixieland, interactive ensemble, syncopated phrasing, rich harmonic movement"
+  },
+  {
+    "name": "埃塞俄比亚爵士",
+    "genre": "Ethio-Jazz",
+    "category": "爵士",
+    "prompt": "Ethio-Jazz, interactive ensemble, syncopated phrasing, rich harmonic movement"
+  },
+  {
+    "name": "爵士放克",
+    "genre": "Jazz-Funk",
+    "category": "爵士",
+    "prompt": "Jazz-Funk, interactive ensemble, syncopated phrasing, rich harmonic movement"
+  },
+  {
+    "name": "摇摆爵士",
+    "genre": "Swing",
+    "category": "爵士",
+    "prompt": "Swing, interactive ensemble, syncopated phrasing, rich harmonic movement"
+  },
+  {
+    "name": "复兴摇摆",
+    "genre": "Swing Revival",
+    "category": "爵士",
+    "prompt": "Swing Revival, interactive ensemble, syncopated phrasing, rich harmonic movement"
+  },
+  {
+    "name": "金属",
+    "genre": "Metal",
+    "category": "金属与工业",
+    "prompt": "Metal, distorted guitar riffs, powerful drums, intense dynamics"
+  },
+  {
+    "name": "说唱金属",
+    "genre": "Rap Metal",
+    "category": "金属与工业",
+    "prompt": "Rap Metal, distorted guitar riffs, powerful drums, intense dynamics"
+  },
+  {
+    "name": "激流金属",
+    "genre": "Thrash Metal",
+    "category": "金属与工业",
+    "prompt": "Thrash Metal, distorted guitar riffs, powerful drums, intense dynamics"
+  },
+  {
+    "name": "阿拉伯流行",
+    "genre": "Arabic Pop",
+    "category": "流行",
+    "prompt": "Arabic Pop, memorable melody, contrasting sections, polished arrangement"
+  },
+  {
+    "name": "男团流行",
+    "genre": "Boy Band",
+    "category": "流行",
+    "prompt": "Boy Band, memorable melody, contrasting sections, polished arrangement"
+  },
+  {
+    "name": "都市流行",
+    "genre": "City Pop",
+    "category": "流行",
+    "prompt": "City Pop, memorable melody, contrasting sections, polished arrangement"
+  },
+  {
+    "name": "日系流行",
+    "genre": "J-Pop",
+    "category": "流行",
+    "prompt": "J-Pop, memorable melody, contrasting sections, polished arrangement"
+  },
+  {
+    "name": "流行摇滚",
+    "genre": "Pop Rock",
+    "category": "流行",
+    "prompt": "Pop Rock, memorable melody, contrasting sections, polished arrangement"
+  },
+  {
+    "name": "软摇滚",
+    "genre": "Soft Rock",
+    "category": "流行",
+    "prompt": "Soft Rock, memorable melody, contrasting sections, polished arrangement"
+  },
+  {
+    "name": "游艇摇滚",
+    "genre": "Yacht Rock",
+    "category": "流行",
+    "prompt": "Yacht Rock, memorable melody, contrasting sections, polished arrangement"
+  },
+  {
+    "name": "太空摇滚",
+    "genre": "Space Rock",
+    "category": "摇滚与朋克",
+    "prompt": "Space Rock, expansive guitar textures, evolving motifs, spacious production"
+  },
+  {
+    "name": "Emo",
+    "genre": "Emo",
+    "category": "摇滚与朋克",
+    "prompt": "Emo, driving rhythm, direct melodic phrases, energetic arrangement"
+  },
+  {
+    "name": "Emo 流行",
+    "genre": "Emo-Pop",
+    "category": "摇滚与朋克",
+    "prompt": "Emo-Pop, driving rhythm, direct melodic phrases, energetic arrangement"
+  },
+  {
+    "name": "舞曲朋克",
+    "genre": "Dance-Punk",
+    "category": "摇滚与朋克",
+    "prompt": "Dance-Punk, driving rhythm, direct melodic phrases, energetic arrangement"
+  },
+  {
+    "name": "节奏布鲁斯",
+    "genre": "R&B",
+    "category": "节奏布鲁斯与灵魂",
+    "prompt": "R&B, expressive phrasing, warm harmony, groove-centered arrangement"
+  },
+  {
+    "name": "放克",
+    "genre": "Funk",
+    "category": "节奏布鲁斯与灵魂",
+    "prompt": "Funk, expressive phrasing, warm harmony, groove-centered arrangement"
+  },
+  {
+    "name": "灵魂乐",
+    "genre": "Soul",
+    "category": "节奏布鲁斯与灵魂",
+    "prompt": "Soul, expressive phrasing, warm harmony, groove-centered arrangement"
+  },
+  {
+    "name": "南方灵魂乐",
+    "genre": "Southern Soul",
+    "category": "节奏布鲁斯与灵魂",
+    "prompt": "Southern Soul, expressive phrasing, warm harmony, groove-centered arrangement"
+  },
+  {
+    "name": "演歌",
+    "genre": "Enka",
+    "category": "地区音乐",
+    "prompt": "Enka, distinctive regional instrumentation, idiomatic rhythm, clear melodic phrasing"
+  },
+  {
+    "name": "旁遮普舞曲",
+    "genre": "Bhangra",
+    "category": "地区音乐",
+    "prompt": "Bhangra, distinctive regional instrumentation, idiomatic rhythm, clear melodic phrasing"
+  },
+  {
+    "name": "巴恰塔",
+    "genre": "Bachata",
+    "category": "地区音乐",
+    "prompt": "Bachata, distinctive regional instrumentation, idiomatic rhythm, clear melodic phrasing"
+  },
+  {
+    "name": "凯尔特摇滚",
+    "genre": "Celtic Rock",
+    "category": "地区音乐",
+    "prompt": "Celtic Rock, distinctive regional instrumentation, idiomatic rhythm, clear melodic phrasing"
+  },
+  {
+    "name": "弗拉门戈",
+    "genre": "Flamenco",
+    "category": "地区音乐",
+    "prompt": "Flamenco, distinctive regional instrumentation, idiomatic rhythm, clear melodic phrasing"
+  },
+  {
+    "name": "雷鬼顿",
+    "genre": "Reggaetón",
+    "category": "地区音乐",
+    "prompt": "Reggaetón, distinctive regional instrumentation, idiomatic rhythm, clear melodic phrasing"
+  },
+  {
+    "name": "理发店和声",
+    "genre": "Barbershop",
+    "category": "地区音乐",
+    "prompt": "Barbershop, distinctive regional instrumentation, idiomatic rhythm, clear melodic phrasing"
+  },
+  {
+    "name": "乡村摇滚",
+    "genre": "Country Rock",
+    "category": "地区音乐",
+    "prompt": "Country Rock, distinctive regional instrumentation, idiomatic rhythm, clear melodic phrasing"
+  },
+  {
+    "name": "南方福音",
+    "genre": "Southern Gospel",
+    "category": "地区音乐",
+    "prompt": "Southern Gospel, distinctive regional instrumentation, idiomatic rhythm, clear melodic phrasing"
+  },
+  {
+    "name": "独立摇滚",
+    "genre": "Indie Rock",
+    "category": "摇滚与朋克",
+    "prompt": "Indie Rock, guitar-led arrangement, bass and live drums, dynamic sections"
+  },
+  {
+    "name": "基督教摇滚",
+    "genre": "Christian Rock",
+    "category": "摇滚与朋克",
+    "prompt": "Christian Rock, guitar-led arrangement, bass and live drums, dynamic sections"
+  },
+  {
+    "name": "放克摇滚",
+    "genre": "Funk Rock",
+    "category": "摇滚与朋克",
+    "prompt": "Funk Rock, guitar-led arrangement, bass and live drums, dynamic sections"
+  },
+  {
+    "name": "华丽金属",
+    "genre": "Glam Metal",
+    "category": "摇滚与朋克",
+    "prompt": "Glam Metal, guitar-led arrangement, bass and live drums, dynamic sections"
+  },
+  {
+    "name": "腹地摇滚",
+    "genre": "Heartland Rock",
+    "category": "摇滚与朋克",
+    "prompt": "Heartland Rock, guitar-led arrangement, bass and live drums, dynamic sections"
+  },
+  {
+    "name": "爵士摇滚",
+    "genre": "Jazz-Rock",
+    "category": "摇滚与朋克",
+    "prompt": "Jazz-Rock, guitar-led arrangement, bass and live drums, dynamic sections"
+  },
+  {
+    "name": "摇滚乐",
+    "genre": "Rock & Roll",
+    "category": "摇滚与朋克",
+    "prompt": "Rock & Roll, guitar-led arrangement, bass and live drums, dynamic sections"
+  }
+]
