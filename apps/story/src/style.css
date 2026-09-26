@@ -90,3 +90,5 @@ input::placeholder,textarea::placeholder{color:color-mix(in srgb,var(--ui-muted)
 .shot-image-drop{position:relative}.shot-image-drop.dragging{outline:.125rem solid var(--ui-accent);outline-offset:.125rem}.shot-image .shot-gallery-empty{border-radius:0;background:transparent;padding:0;cursor:pointer}.shot-gallery-cover>img{border-radius:0}
 
 .agent-panel .ui-autocomplete>input{font-size:.6875rem}.font-size-controls .ui-autocomplete{width:8rem;flex-shrink:0}
+
+.shot-project-settings{display:flex;flex-direction:column;gap:1.25rem}.shot-project-settings .hint{margin:0}.shot-project-settings input[type=number]{font-size:1rem}.shot-project-settings .shot-export-group{flex-direction:row;align-items:center;gap:.625rem}
