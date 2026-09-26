@@ -140,3 +140,5 @@ aside nav{min-height:0;overflow-y:auto;flex:1}.sidebar-foot{flex-shrink:0;margin
 
 .music-song-filters{flex:0 0 auto;position:relative;z-index:5;padding:0 32px 16px;background:var(--ui-surface)}
 .music-song-filters .song-filter-toolbar,.music-song-filters .workspace-search{margin:0}
+
+.music-workspace .music-song .song-created-meta{margin:10px 0 0;font-size:11px}
