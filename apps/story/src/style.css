@@ -67,3 +67,16 @@ input::placeholder,textarea::placeholder{color:color-mix(in srgb,var(--ui-muted)
 .shot-title-row{display:flex;align-items:center;gap:1rem}.shot-title-row .editable-title{flex:1;min-width:0;width:auto}.shot-title-row .shot-enabled{flex-direction:row;align-items:center;gap:.375rem;flex-shrink:0;margin-left:auto;font-size:.75rem;white-space:nowrap}
 
 .asset-thumbnail .asset-thumbnail-image{border-radius:.625rem}.asset-thumbnail-image>img,.asset-thumbnail-image>.media-placeholder{border-radius:.5rem}
+
+.inline-asset .inline-asset-label{display:inline;padding:0;border:0;border-radius:0;background:transparent;color:inherit;font:inherit;text-align:left;cursor:default}.inline-asset .inline-asset-label:hover{background:transparent;color:inherit}
+.asset-details-content{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:1.5rem;align-items:start}.asset-details-content dl{margin:0}.asset-details-content dt{font-size:.8125rem;color:var(--ui-muted);margin-bottom:.375rem}.asset-details-content dd{margin:0 0 1rem;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.7}.asset-details-content audio{max-width:100%}.asset-details-navigation{display:flex;width:100%;justify-content:space-between;align-items:center;gap:1rem}@media(max-width:45rem){.asset-details-content{grid-template-columns:1fr}}
+
+.mention-thumbnail-preview{position:fixed;z-index:110;padding:.375rem;border:.0625rem solid var(--ui-border);border-radius:.5rem;background:var(--ui-surface);box-shadow:0 .375rem 1rem var(--ui-shadow);pointer-events:none}.mention-thumbnail-preview>img,.mention-thumbnail-preview>.media-placeholder{width:100%;height:100%;min-height:0;object-fit:contain;border-radius:.25rem}
+
+.ui-dialog:has(.asset-details-content) .ui-dialog-layout{height:min(42rem,85dvh)}
+.ui-dialog:has(.asset-details-content) .ui-dialog-header h2{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.asset-details-content{height:100%;min-height:0;grid-template-rows:minmax(0,1fr)}
+.asset-details-image{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;border-radius:.5rem;background:var(--ui-raised)}
+.asset-details-image>img,.asset-details-image>.media-placeholder{position:absolute;inset:0;width:100%;height:100%;min-height:0;object-fit:contain}
+.asset-details-text{height:100%;min-height:0;overflow:auto;overscroll-behavior:contain;padding-right:.375rem}
+@media(max-width:45rem){.asset-details-content{grid-template-rows:auto minmax(0,1fr)}}

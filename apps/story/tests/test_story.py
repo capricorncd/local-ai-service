@@ -98,8 +98,9 @@ def test_timeline_media_audio_frames_and_disabled(service):
 
 def test_agent_rejects_unknown_assets_and_no_invented_files():
     with pytest.raises(ValueError):parse_agent_shots('{"shots":[{"asset_ids":["fake"]}]}',[])
-    shots=parse_agent_shots('```json\n{"shots":[{"description":"开门","image":"fake.png","audio":"fake.wav"}]}\n```',[])
+    shots=parse_agent_shots('```json\n{"shots":[{"description":"开门","image":"fake.png","images":["reference.png"],"hidden_images":["fake.png"],"audio":"fake.wav"}]}\n```',[])
     assert shots[0].image==shots[0].audio==''
+    assert shots[0].images==shots[0].hidden_images==[]
 
 
 def test_audio_bridge_and_stale_apply(service,monkeypatch):

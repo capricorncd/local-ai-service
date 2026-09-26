@@ -160,6 +160,7 @@ def parse_agent_shots(text, assets):
             raise ValueError('Agent 返回了未知资产引用，请重新生成')
         # New proposals cannot invent files or collide with persisted shot IDs.
         s.id, s.image, s.audio, s.audio_text, s.audio_duration = uid(), '', '', '', 0
+        s.images, s.hidden_images = [], []
         result.append(s)
     return result
 
