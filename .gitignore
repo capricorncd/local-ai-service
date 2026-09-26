@@ -141,3 +141,56 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# Python environments and caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Local AI runtimes, downloaded models and generated user data
+runtimes/
+data/
+
+# Desktop build outputs and generated Tauri schemas
+**/src-tauri/target/
+**/src-tauri/gen/
+/Local-AI-*.exe
+
+# Root compatibility junctions (sources live under apps/audio)
+/docs
+/requirements
+/scripts
+/server
+/src
+/src-tauri
+/tests
+
+# Local editor, OS and temporary files
+.idea/
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.tmp
+*.temp
+*.bak
+*.orig
+*.rej
+
+# Local image metadata backups
+/apps/story/design/backups/
+/apps/story/design/icon-backups/
+
+# Machine-specific deployment helper
+/apps/audio/scripts/deploy-tts.ps1
+
+# Machine-specific diagnostics and recovery
+/apps/audio/scripts/check-breeze.ps1
+/apps/audio/scripts/check-playback.ps1
+/apps/audio/scripts/recover-song-history.py

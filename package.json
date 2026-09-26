@@ -1,0 +1,40 @@
+{
+  "name": "local-ai-apps",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "npm run dev --workspace @local-ai/audio",
+    "build": "npm run build --workspace @local-ai/audio",
+    "tauri": "npm run tauri --workspace @local-ai/audio",
+    "test": "npm run test --workspace @local-ai/audio",
+    "image:dev": "npm run dev --workspace @local-ai/image",
+    "image:build": "npm run build --workspace @local-ai/image",
+    "image:tauri": "npm run tauri --workspace @local-ai/image",
+    "build:all": "npm run build --workspaces --if-present",
+    "story:dev": "npm run dev --workspace @local-ai/story",
+    "story:build": "npm run build --workspace @local-ai/story",
+    "story:tauri": "npm run tauri --workspace @local-ai/story",
+    "story:test": "npm run test --workspace @local-ai/story"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^2.10.1",
+    "@tauri-apps/plugin-dialog": "^2.7.0",
+    "abcjs": "^6.7.0",
+    "lucide-react": "^0.577.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.10.1",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^5.1.4",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}

@@ -1,0 +1,9 @@
+<!doctype html><html lang="zh"><meta charset="utf-8"><title>Shared appearance preview</title><div id="root"></div><script type="module">
+import React from 'react';
+import {createRoot} from 'react-dom/client';
+import {AppearanceSettings,initializeTheme} from './src/index.tsx';
+const app=new URLSearchParams(location.search).get('app')||'story';
+await import('../../apps/'+app+'/src/style.css');
+initializeTheme(app);
+createRoot(document.getElementById('root')).render(React.createElement('main',{style:{maxWidth:800,margin:'24px auto',padding:20}},React.createElement('h1',null,app+' · 外观预览'),React.createElement(AppearanceSettings),React.createElement('section',{className:'panel settings-card',style:{padding:24,border:'1px solid var(--ui-border)',background:'var(--ui-surface)',borderRadius:12}},React.createElement('h2',null,'剧本与创作工具'),React.createElement('p',null,'正文、辅助说明、输入框和操作按钮'),React.createElement('input',{defaultValue:'清晨的电车 · 第一个镜头'}),React.createElement('button',{className:'button primary',style:{marginLeft:12}},'保存'),React.createElement('textarea',{defaultValue:'列车穿过山间。神谷透抬头望向车窗。',style:{display:'block',marginTop:16,width:'100%'}}))));
+</script></html>
