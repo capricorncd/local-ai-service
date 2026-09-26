@@ -1,0 +1,12 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><title>剧本编辑器预览</title><meta name="viewport" content="width=device-width, initial-scale=1"></head><body><div id="root"></div><script type="module">
+import React,{useState} from 'react';
+import {createRoot} from 'react-dom/client';
+import {ScriptEditor} from '../src/ScriptEditor.tsx';
+import {AppearanceSettings} from '../../../packages/ui/src/AppearanceSettings.tsx';
+import {initializeTheme} from '../../../packages/ui/src/theme.ts';
+import '../../../packages/ui/src/theme.css';
+import '../src/style.css';
+initializeTheme('story');
+function Preview(){const [value,setValue]=useState('## 0:00—0:28 行驶中的电车\n\n列车沿山间线路行驶。窗外的树林、住宅和电线杆快速后退。\n\n**户塚**\n\n「ねえ、その格好で一人？」\n\n灰银色挑染、双耳佩戴黑色耳钉的川濑悠斗上下打量女孩。');return React.createElement('main',{className:'script-paper',style:{maxWidth:900,margin:'30px auto'}},React.createElement(AppearanceSettings),React.createElement(ScriptEditor,{value,onChange:setValue,onSelection:()=>{}}));}createRoot(document.querySelector('#root')).render(React.createElement(Preview));
+</script></body></html>
+

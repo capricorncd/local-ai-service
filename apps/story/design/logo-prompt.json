@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "asset_name": "Local AI Story application logo",
+  "asset_type": "image",
+  "generation_prompt": "Design a single polished desktop application icon for an AI comic-drama screenplay and storyboard manager. A bold ingenious geometric mark combining an unfolding screenplay page with three sequential storyboard frames, suggesting a story turning into film. Deep midnight plum rounded-square tile, warm ivory page/frame shapes, a small vivid coral-orange fold accent. Very clean restrained contemporary vector-like visual, precise thick rounded geometry, strong silhouette legible at 32 pixels, centered with generous safe margins. Flat colors, no gradients, no shadows, no text, no letters, no watermark, no mockup, one icon only. Square 1024 by 1024 PNG.",
+  "generation_prompt_status": "exact",
+  "generation_prompt_source": "Built-in image_gen call in this task",
+  "generation_mode": "built-in",
+  "reference_images": []
+}

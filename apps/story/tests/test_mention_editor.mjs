@@ -1,0 +1,20 @@
+import assert from 'node:assert/strict';import{JSDOM}from'jsdom';import{build}from'esbuild';import{rm}from'node:fs/promises';
+const dom=new JSDOM('<!doctype html><div id="root"></div>',{url:'http://localhost',pretendToBeVisual:true});
+for(const key of ['window','document','navigator','Node','HTMLElement','Element','Text','MutationObserver','DOMParser','Event','KeyboardEvent','MouseEvent'])Object.defineProperty(globalThis,key,{value:dom.window[key],configurable:true});
+globalThis.getComputedStyle=dom.window.getComputedStyle.bind(dom.window);globalThis.innerHeight=720;globalThis.IS_REACT_ACT_ENVIRONMENT=true;
+dom.window.Range.prototype.getClientRects=()=>[];dom.window.Range.prototype.getBoundingClientRect=()=>({top:0,left:0,bottom:0,right:0,width:0,height:0});
+const {default:React,act}=await import('react');const{createRoot}=await import('react-dom/client');
+const out=new URL('./.mention-editor-test.mjs',import.meta.url);await build({entryPoints:['apps/story/src/MentionEditor.tsx'],outfile:out.pathname.replace(/^\/([A-Za-z]:)/,'$1'),bundle:true,format:'esm',platform:'node',packages:'external',jsx:'automatic'});
+try{const{MentionEditor,clipboardPlainText}=await import(out.href);const assets=[{id:'a',name:'陈墨'},{id:'b',name:'仓库 夜'}];let value='陈墨走向 @仓库 夜。\n雨声。',writes=[];const ref=React.createRef(),root=createRoot(document.querySelector('#root'));
+const render=()=>root.render(React.createElement(MentionEditor,{ref,value,assets,onInput:(v)=>{value=v;writes.push(v);render();},onCaret(){},onEscape(){},onHover(){}}));await act(async()=>render());assert.equal(writes.length,0);assert.equal(document.querySelectorAll('.inline-asset').length,1);
+await act(async()=>ref.current.insert(0,2,'@[陈墨](asset:a)'));assert.equal(value,'@[陈墨](asset:a)走向 @仓库 夜。\n雨声。');assert.equal(document.querySelectorAll('.inline-asset').length,2);
+const beforeFocus=value;const writesBeforeFocus=writes.length;
+await act(async()=>{ref.current.focus();document.querySelector('.mention-input').blur();ref.current.focus();await new Promise(resolve=>setTimeout(resolve,30));});assert.equal(value,beforeFocus);assert.equal(writes.length,writesBeforeFocus,'Focus must not save content');
+// A browser DOM reconciliation can replace inline spans while focusing/editing.
+await act(async()=>{const paragraph=document.querySelector('.mention-input p');paragraph.replaceChildren(...Array.from(paragraph.childNodes,node=>node.cloneNode(true)));await new Promise(resolve=>setTimeout(resolve,30));});assert.equal(value,beforeFocus,'DOM reconciliation must preserve reference IDs and source text');assert.equal(document.querySelectorAll('.inline-asset').length,2);assert.equal(writes.length,writesBeforeFocus,'DOM reconciliation must not save unchanged text');
+await act(async()=>document.querySelector('.inline-asset-remove').click());assert.equal(value,'走向 @仓库 夜。\n雨声。');
+await act(async()=>document.querySelector('.mention-input').dispatchEvent(new KeyboardEvent('keydown',{key:'z',code:'KeyZ',ctrlKey:true,bubbles:true})));assert(value.startsWith('@[陈墨](asset:a)'),'Undo restores removed asset');
+const data={types:['text/html'],getData:type=>type==='text/html'?'<div style="color:red"><b>纯文字</b><br>下一行<script>evil()</script></div>':''};assert.equal(clipboardPlainText(data),'纯文字\n下一行');
+await act(async()=>{value='';render();});ref.current.focus();const paste=new Event('paste',{bubbles:true,cancelable:true});Object.defineProperty(paste,'clipboardData',{value:data});await act(async()=>document.querySelector('.mention-input').dispatchEvent(paste));assert.equal(value,'纯文字\n下一行');assert(!document.querySelector('.mention-input b,.mention-input script,[style="color:red"]'));
+await act(async()=>{value='外部更新 @[陈墨](asset:a)';render();});assert.equal(document.querySelector('.inline-asset').textContent,'@陈墨×');await act(async()=>root.unmount());console.log('Mention editor: legacy tokens, no-op load, insertion, removal/undo, multiline HTML-free paste and external updates passed');
+}finally{await rm(out,{force:true});dom.window.close();}

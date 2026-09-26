@@ -1,0 +1,6 @@
+import assert from 'node:assert/strict';import{readFileSync}from'node:fs';import ts from'typescript';
+const m={};new Function('exports',ts.transpileModule(readFileSync(new URL('../src/imageJobs.ts',import.meta.url),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText)(m);
+const make=()=>({chapters:[{episodes:[{shots:[{id:'shot',image:'old.png',description:'正在编辑的正文'}]}]}]});
+const job={id:'new',kind:'shot',target_id:'shot',status:'completed',path:'result.png',previous_image:'old.png'};
+let p=make();assert(m.applyFinishedShot(p,job,[job]));assert.equal(p.chapters[0].episodes[0].shots[0].image,'result.png');assert.equal(p.chapters[0].episodes[0].shots[0].description,'正在编辑的正文');assert(!m.applyFinishedShot(p,job,[job]));
+p=make();assert(!m.applyFinishedShot(p,job,[{...job,id:'newer',status:'running'},job]));p.chapters[0].episodes[0].shots[0].image='imported.png';assert(!m.applyFinishedShot(p,job,[job]));assert(!m.applyFinishedShot({chapters:[]},job,[job]));assert(!m.applyFinishedShot(make(),{...job,status:'failed'},[job]));assert(m.isImagePending({...job,status:'queued'}));assert(!m.isImagePending(job));console.log('Image jobs: latest result only, no duplicate apply, manual replacement protected, deleted targets and failures handled');

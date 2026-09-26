@@ -1,0 +1,56 @@
+import assert from 'node:assert/strict';
+import {JSDOM} from 'jsdom';
+import {build} from 'esbuild';
+import {pathToFileURL} from 'node:url';
+import {rm} from 'node:fs/promises';
+const dom=new JSDOM('<!doctype html><html><body><div id="root"></div></body></html>',{url:'http://localhost',pretendToBeVisual:true});
+for(const name of ['window','document','navigator','Event','CustomEvent','KeyboardEvent','MouseEvent','Node','HTMLElement','Element','Text','MutationObserver','DOMParser','getComputedStyle','requestAnimationFrame','cancelAnimationFrame'])Object.defineProperty(globalThis,name,{value:typeof dom.window[name]==='function'&&['getComputedStyle','requestAnimationFrame','cancelAnimationFrame'].includes(name)?dom.window[name].bind(dom.window):dom.window[name],configurable:true});
+globalThis.addEventListener=dom.window.addEventListener.bind(dom.window);globalThis.removeEventListener=dom.window.removeEventListener.bind(dom.window);
+globalThis.dispatchEvent=dom.window.dispatchEvent.bind(dom.window);
+globalThis.ResizeObserver=class{observe(){}unobserve(){}disconnect(){}};
+globalThis.IntersectionObserver=class{observe(){}unobserve(){}disconnect(){}};
+dom.window.Range.prototype.getClientRects=()=>[];
+dom.window.Range.prototype.getBoundingClientRect=()=>({top:0,left:0,bottom:0,right:0,width:0,height:0});
+for(const name of Object.getOwnPropertyNames(dom.window)){if(!(name in globalThis))Object.defineProperty(globalThis,name,{get:()=>dom.window[name],configurable:true});}
+globalThis.IS_REACT_ACT_ENVIRONMENT=true;
+const {default:React,act}=await import('react');
+const {createRoot}=await import('react-dom/client');
+const {editorViewCtx}=await import('@milkdown/kit/core');
+const {Editor}=await import('@milkdown/kit/core');
+let activeView;const make=Editor.make;Editor.make=function(...args){const editor=make.apply(this,args);const create=editor.create;editor.create=async(...args)=>{const result=await create(...args);activeView=editor.action(ctx=>ctx.get(editorViewCtx));return result;};return editor;};
+const {TextSelection}=await import('@milkdown/kit/prose/state');
+const output=new URL('./.script-editor-test.mjs',import.meta.url);
+await build({entryPoints:['apps/story/src/ScriptEditor.tsx'],outfile:output.pathname.replace(/^\/([A-Za-z]:)/,'$1'),bundle:true,format:'esm',platform:'node',packages:'external',jsx:'automatic',loader:{'.css':'empty'},plugins:[{name:'ignore-css',setup(b){b.onResolve({filter:/\.css$/},()=>({path:'empty',namespace:'empty-css'}));b.onLoad({filter:/.*/,namespace:'empty-css'},()=>({contents:'',loader:'js'}));}}]});
+try{
+ const {ScriptEditor}=await import(pathToFileURL(output.pathname.replace(/^\/([A-Za-z]:)/,'$1')).href);
+ const root=createRoot(document.querySelector('#root')),ref=React.createRef();
+ let value='## 标题\n\n**夜绮罗**\n\n同一句话。\n\n同一句话。\n',writes=[];
+ const render=()=>root.render(React.createElement(ScriptEditor,{ref,value,onChange:next=>{writes.push(next);value=next;render();},onSelection:()=>{}}));
+ await act(async()=>{render();});
+ for(let i=0;i<40&&!document.querySelector('.ProseMirror');i++)await act(async()=>{await new Promise(r=>setTimeout(r,30));});
+ await act(async()=>{await new Promise(r=>setTimeout(r,100));});
+ assert.ok(document.querySelector('.ProseMirror h2'),document.body.innerHTML);
+ assert.equal(document.querySelector('.ProseMirror strong').textContent,'夜绮罗');
+ assert.equal(writes.length,0,'Opening must not normalize or save Markdown');
+ let view=activeView;
+ const positions=[];view.state.doc.descendants((node,pos)=>{if(node.isText&&node.text==='同一句话。')positions.push(pos);});
+ await act(async()=>view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc,positions[1],positions[1]+5))));
+ const selected=ref.current.getSelection();assert.equal(selected.text.trim(),'同一句话。');
+ const replaced=selected.replace('新的台词。');assert.equal((replaced.match(/同一句话/g)||[]).length,1);assert.ok(replaced.indexOf('同一句话')<replaced.indexOf('新的台词'));assert.equal(writes.length,0);
+ await act(async()=>view.dispatch(view.state.tr.insertText('修改',positions[1])));
+ assert.equal(writes.length,1,'Edits propagate synchronously, before leaving the editor');
+ const edited=value;
+ await act(async()=>document.querySelectorAll('.script-mode button')[1].click());
+ assert.equal(document.querySelector('textarea').value,edited);
+ await act(async()=>document.querySelectorAll('.script-mode button')[0].click());
+ await act(async()=>{await new Promise(r=>setTimeout(r,150));});
+ assert.equal(writes.length,1,'Switching modes must not save');
+ value='# 外部修订\n\n保留新内容';await act(async()=>render());
+ assert.equal(document.querySelector('.ProseMirror h1').textContent,'外部修订');assert.equal(writes.length,1);
+ view=activeView;
+ await act(async()=>view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc,1,view.state.doc.content.size-1))));
+ assert.ok(ref.current.getSelection().replace('替换整段').includes('替换整段'));
+ await act(async()=>root.unmount());
+ console.log('PASS: Markdown rendering, no-op opens/mode changes, immediate editing, external updates, duplicate-text and multi-block AI selection replacement');
+}finally{await rm(output,{force:true});dom.window.close();}
+

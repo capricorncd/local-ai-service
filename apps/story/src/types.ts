@@ -1,0 +1,11 @@
+export type Shot={id:string;title:string;scene:string;description:string;duration:number;shot_size:string;angle:string;camera_move:string;lighting:string;speaker:string;dialogue:string;delivery:string;emotion:string;sound:string;subtitle:string;asset_ids:string[];image:string;images?:string[];hidden_images?:string[];disabled:boolean;audio:string;audio_text:string;audio_duration:number};
+export type Episode={id:string;title:string;kind:'episode'|'special';script:string;shots:Shot[]};
+export type Chapter={id:string;title:string;episodes:Episode[]};
+export type Asset={id:string;name:string;kind:'character'|'scene'|'prop';description:string;gender:string;body:string;form:string;clothing:string;constraints:string;image:string;voice:string;voice_description:string;voice_preset:string;voice_reference_text:string;generation_prompt:string};
+export type Project={format:'local-ai-story';version:1;id:string;name:string;revision:number;updated:string;width:number;height:number;fps:number;style:string;chapters:Chapter[];assets:Asset[]};
+export type Settings={project_directory:string;provider:'ollama'|'openai';agent_url:string;model:string;api_key:string;image_url:string;image_token:string;storyboard_max_edge:number;steps:number;cfg:number;audio_url:string;audio_token:string;tts_model:'qwen3-tts'|'breeze-tts2';tts_speaker:string;tts_language:string};
+export type Job={id:string;kind:'asset'|'shot'|'board'|'speech';target_id:string;status:string;path:string;progress?:number;error?:string;sync_error?:string;previous_image?:string;created_at?:number;prompt:string;text?:string;duration?:number;warnings?:string[]};
+export const uid=()=>crypto.randomUUID().replaceAll('-','');
+export const newEpisode=(title='新一话'):Episode=>({id:uid(),title,kind:'episode',script:'',shots:[]});
+export const newShot=():Shot=>({id:uid(),title:'新镜头',scene:'',description:'',duration:5,shot_size:'中景',angle:'平视',camera_move:'固定',lighting:'',speaker:'',dialogue:'',delivery:'',emotion:'',sound:'',subtitle:'',asset_ids:[],image:'',disabled:false,audio:'',audio_text:'',audio_duration:0});
+export const newAsset=():Asset=>({id:uid(),name:'新角色',kind:'character',description:'',gender:'',body:'',form:'',clothing:'',constraints:'',image:'',voice:'',voice_description:'',voice_preset:'vivian',voice_reference_text:'',generation_prompt:''});

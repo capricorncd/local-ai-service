@@ -1,0 +1,9 @@
+import {useEffect,useState} from 'react';
+export function durationParts(duration:number,fps:number){const rate=Math.max(1,Math.round(fps)||24);const frames=Math.max(1,Math.round(duration*rate));return {seconds:Math.floor(frames/rate),frames:frames%rate};}
+export function composeDuration(seconds:number,frames:number,fps:number){const rate=Math.max(1,Math.round(fps)||24);return Math.min(3600,Math.max(1,Math.max(0,Math.floor(seconds))*rate+Math.min(rate-1,Math.max(0,Math.floor(frames))))/rate);}
+export function ShotDuration({value,fps,onChange}:{value:number;fps:number;onChange:(duration:number)=>void}){
+ const parts=durationParts(value,fps);const [seconds,setSeconds]=useState(String(parts.seconds)),[frames,setFrames]=useState(String(parts.frames));
+ useEffect(()=>{const p=durationParts(value,fps);setSeconds(String(p.seconds));setFrames(String(p.frames));},[value,fps]);
+ function commit(){if(seconds===''||frames===''||!Number.isFinite(+seconds)||!Number.isFinite(+frames)){const p=durationParts(value,fps);setSeconds(String(p.seconds));setFrames(String(p.frames));return;}const next=composeDuration(+seconds,+frames,fps);const p=durationParts(next,fps);setSeconds(String(p.seconds));setFrames(String(p.frames));if(next!==value)onChange(next);}
+ return <div className="shot-duration" role="group" aria-label="镜头时长"><label>时长（秒）<input aria-label="时长（秒）" type="number" min={0} max={3600} step={1} value={seconds} onChange={e=>setSeconds(e.target.value)} onBlur={commit} onKeyDown={e=>{if(e.key==='Enter')e.currentTarget.blur();}}/></label><span>+</span><label>帧<input aria-label="时长（帧）" title={`每秒 ${fps} 帧，范围 0–${fps-1}`} type="number" min={0} max={fps-1} step={1} value={frames} onChange={e=>setFrames(e.target.value)} onBlur={commit} onKeyDown={e=>{if(e.key==='Enter')e.currentTarget.blur();}}/></label></div>;
+}

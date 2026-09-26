@@ -1,0 +1,27 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import ts from 'typescript';
+const source=readFileSync(new URL('../src/useProject.ts',import.meta.url),'utf8');
+const compiled=ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
+let requests=[];
+let responseHook;
+const exports={};
+globalThis.localStorage={setItem(){},removeItem(){}};
+new Function('require','exports',compiled)(name=>{
+ if(name==='react')return {useState:value=>[value,()=>{}],useRef:value=>({current:value}),useEffect(){}};
+ if(name.includes('core'))return {isTauri:()=>false};
+ if(name.includes('window'))return {};
+ if(name==='./api')return {api:async(path,options)=>{const value=JSON.parse(options.body);requests.push(value);if(responseHook){const hook=responseHook;responseHook=null;await hook();}return {...value,revision:value.revision+1,updated:'saved'};}};
+ throw Error(name);
+},exports);
+const project={id:'project',name:'Test',revision:0,updated:'',chapters:[{id:'season',episodes:[{id:'episode',script:'original',shots:[]}]}],assets:[]};
+const hook=exports.useProject(error=>{throw error;});
+hook.load(project);await hook.flush();assert.equal(requests.length,0);
+hook.edit(p=>{p.name='Test';});await hook.flush();assert.equal(requests.length,0);
+hook.edit(p=>{p.name='changed';});hook.edit(p=>{p.name='Test';});await hook.flush();assert.equal(requests.length,0);
+hook.edit(p=>{p.name='saved change';});await hook.flush();assert.equal(requests.length,1);
+await hook.flush();assert.equal(requests.length,1);
+hook.edit(p=>{p.name='in flight';});responseHook=()=>hook.edit(p=>{p.name='latest edit';});await hook.flush();assert.equal(requests.length,3);assert.equal(hook.current.current.name,'latest edit');
+hook.edit(p=>{p.name='pending';});responseHook=()=>hook.edit(p=>{p.name='latest edit';});await hook.flush();assert.equal(requests.length,5);assert.equal(hook.current.current.name,'latest edit');
+assert(exports.sameProjectContent(project,{...structuredClone(project),revision:99,updated:'different'}));
+console.log('Autosave: unchanged, reverted, metadata-only and concurrent edits passed');
