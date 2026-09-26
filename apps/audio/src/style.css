@@ -137,3 +137,6 @@ aside nav{min-height:0;overflow-y:auto;flex:1}.sidebar-foot{flex-shrink:0;margin
 .music-page .music-workspace>.music-song-panel{display:flex;flex-direction:column;overflow:hidden;padding:0;scrollbar-gutter:auto}
 .music-workspace>.panel>.music-pane-header{flex:0 0 auto;min-height:80px;padding:24px 32px 16px;margin:0;background:var(--ui-surface)}
 .music-composer-body,.music-song-body{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:0 24px 24px;scrollbar-gutter:stable both-edges}
+
+.music-song-filters{flex:0 0 auto;position:relative;z-index:5;padding:0 32px 16px;background:var(--ui-surface)}
+.music-song-filters .song-filter-toolbar,.music-song-filters .workspace-search{margin:0}
