@@ -106,10 +106,9 @@ aside nav{min-height:0;overflow-y:auto;flex:1}.sidebar-foot{flex-shrink:0;margin
 .main-shell>main.music-page.has-player{padding-bottom:100px}
 .filter-favorite-tags{display:flex;gap:8px;flex-wrap:wrap}
 
-.music-page .music-workspace>.music-composer-panel{display:flex;flex-direction:column;overflow:hidden;padding:0}
-.music-composer-body{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:24px;scrollbar-gutter:stable}
-.music-composer-footer{flex:0 0 auto;padding:16px 24px;border-top:1px solid var(--ui-border);background:var(--ui-surface)}
-.music-composer-footer>label{margin:0 0 12px}
+.music-page .music-workspace>.music-composer-panel{display:flex;flex-direction:column;overflow:hidden;padding:0;scrollbar-gutter:auto}
+.music-composer-body{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:24px;scrollbar-gutter:stable both-edges}
+.music-composer-footer{flex:0 0 auto;padding:16px 32px;border-top:1px solid var(--ui-border);background:var(--ui-surface)}
 .music-composer-footer .music-composer-tools{margin:0}
 .music-composer-body>.section-title{gap:12px}
 
@@ -118,3 +117,13 @@ aside nav{min-height:0;overflow-y:auto;flex:1}.sidebar-foot{flex-shrink:0;margin
 .config-field-issue.invalid .input-with-button input{border:2px solid var(--ui-danger);background:color-mix(in srgb,var(--ui-danger) 6%,var(--ui-input));box-shadow:0 0 0 3px color-mix(in srgb,var(--ui-danger) 10%,transparent)}
 .config-field-issue.pending .config-field-status{color:var(--ui-warning)}
 .config-field-issue.pending .input-with-button input{border-color:var(--ui-warning);background:color-mix(in srgb,var(--ui-warning) 5%,var(--ui-input))}
+
+/* Match the reserved scrollbar space on both sides of each independent pane. */
+.music-page .music-workspace>.music-song-panel{padding:24px;scrollbar-gutter:stable both-edges}
+.music-workspace :is(.music-composer-body,.music-song-panel){scrollbar-width:auto;scrollbar-color:auto}
+.music-workspace :is(.music-composer-body,.music-song-panel)::-webkit-scrollbar{width:8px;height:8px}
+.music-workspace :is(.music-composer-body,.music-song-panel)::-webkit-scrollbar-track{background:transparent}
+.music-workspace :is(.music-composer-body,.music-song-panel)::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--ui-muted) 40%,transparent);border:2px solid transparent;background-clip:padding-box;border-radius:8px}
+.music-workspace :is(.music-composer-body,.music-song-panel)::-webkit-scrollbar-thumb:hover{background-color:var(--ui-muted)}
+.music-workspace :is(.music-composer-body,.music-song-panel)::-webkit-scrollbar-button{display:none;width:0;height:0}
+.music-workspace :is(.music-composer-body,.music-song-panel)::-webkit-scrollbar-corner{background:transparent}
