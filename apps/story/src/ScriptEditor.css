@@ -42,3 +42,9 @@
 .script-more-menu{position:absolute;right:0;top:calc(100% + .375rem);z-index:25;min-width:10rem;padding:.375rem;border:1px solid var(--ui-border);border-radius:.5rem;background:var(--ui-surface);box-shadow:0 .375rem 1.5rem var(--ui-shadow)}
 .script-header-actions .script-more-menu .script-delete{width:100%;justify-content:flex-start;gap:.5rem;padding:.625rem .75rem;color:var(--ui-danger)}
 .script-header-actions .script-more-menu .script-delete:hover{color:var(--ui-danger);background:color-mix(in srgb,var(--ui-danger) 10%,var(--ui-surface))}
+
+.episode-heading{display:flex;align-items:center;gap:.5rem}
+.episode-heading .episode-rename{padding:.375rem;border:0;background:transparent;color:var(--ui-muted);flex-shrink:0}
+.episode-heading .episode-rename:hover{color:var(--ui-accent-text);background:var(--ui-accent-soft)}
+.script-header-actions .script-more-menu button{width:100%;justify-content:flex-start;gap:.5rem;padding:.625rem .75rem;color:var(--ui-text)}
+.script-header-actions .script-more-menu button:hover{background:var(--ui-raised)}
