@@ -1,3 +1,6 @@
+import {InfoTip} from '../../../packages/ui/src/Dialog';
+import {FilePenLine,Code2} from 'lucide-react';
+import type {ReactNode} from 'react';
 import {forwardRef,useEffect,useImperativeHandle,useRef,useState} from 'react';
 import {Crepe} from '@milkdown/crepe';
 import {editorViewCtx,parserCtx,serializerCtx} from '@milkdown/kit/core';
@@ -10,7 +13,7 @@ import './ScriptEditor.css';
 
 export type ScriptSelection={text:string;replace:(text:string)=>string};
 export type ScriptEditorHandle={getSelection:()=>ScriptSelection|undefined};
-type Props={value:string;onChange:(value:string)=>void;onSelection:(range:{start:number;end:number})=>void};
+type Props={heading?:ReactNode;actions?:ReactNode;value:string;onChange:(value:string)=>void;onSelection:(range:{start:number;end:number})=>void};
 export const ScriptEditor=forwardRef<ScriptEditorHandle,Props>(function ScriptEditor(props,ref){
  const host=useRef<HTMLDivElement>(null),crepe=useRef<Crepe|null>(null),latest=useRef(props),emitted=useRef(props.value),syncing=useRef(false);
  const [source,setSource]=useState(false),[error,setError]=useState(''),[ready,setReady]=useState(false);
@@ -53,5 +56,5 @@ export const ScriptEditor=forwardRef<ScriptEditorHandle,Props>(function ScriptEd
   finally{syncing.current=false;}
  },[props.value,source,ready]);
  function mode(next:boolean){sourceRange.current={start:0,end:0};props.onSelection(sourceRange.current);setSource(next);}
- return <div className="story-script-editor"><div className="script-mode" role="group" aria-label="正文编辑模式"><button type="button" aria-pressed={!source} onClick={()=>mode(false)}>可视化编辑</button><button type="button" aria-pressed={source} onClick={()=>mode(true)}>Markdown 源码</button><span>{source?'直接编辑 Markdown':'选中文字设置格式 · / 插入内容'}</span></div>{error&&<p className="editor-error">可视化编辑器加载失败，已切换源码：{error}</p>}{source?<textarea aria-label="Markdown 剧本源码" className="script-editor script-source" value={props.value} onChange={e=>props.onChange(e.target.value)} onSelect={e=>{sourceRange.current={start:e.currentTarget.selectionStart,end:e.currentTarget.selectionEnd};props.onSelection(sourceRange.current);}}/>:<><div ref={host} className="script-rich"/>{!ready&&<p className="editor-loading">正在加载编辑器…</p>}</>}</div>;
+ return <div className="story-script-editor"><div className="script-header">{props.heading&&<span className="script-heading">{props.heading}</span>}<div className="script-mode" role="group" aria-label="正文编辑模式"><button type="button" aria-label="可视化编辑" title="可视化编辑" aria-pressed={!source} onClick={()=>mode(false)}><FilePenLine size={17}/></button><button type="button" aria-label="Markdown 源码" title="Markdown 源码" aria-pressed={source} onClick={()=>mode(true)}><Code2 size={17}/></button></div><InfoTip text={source?'直接编辑 Markdown':'选中文字设置格式 · / 插入内容'}/>{props.actions&&<div className="script-header-actions">{props.actions}</div>}</div>{error&&<p className="editor-error">可视化编辑器加载失败，已切换源码：{error}</p>}{source?<textarea aria-label="Markdown 剧本源码" className="script-editor script-source" value={props.value} onChange={e=>props.onChange(e.target.value)} onSelect={e=>{sourceRange.current={start:e.currentTarget.selectionStart,end:e.currentTarget.selectionEnd};props.onSelection(sourceRange.current);}}/>:<><div ref={host} className="script-rich"/>{!ready&&<p className="editor-loading">正在加载编辑器…</p>}</>}</div>;
 });
