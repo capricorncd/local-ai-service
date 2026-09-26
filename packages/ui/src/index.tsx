@@ -20,3 +20,5 @@ export {AppearanceSettings} from './AppearanceSettings';
 export {initializeTheme} from './theme';
 
 export {Dialog,DialogActions,InfoTip} from './Dialog';
+
+export {Autocomplete, AutocompleteSelect} from './Autocomplete';

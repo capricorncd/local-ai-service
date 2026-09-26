@@ -6,3 +6,5 @@
 .autosave-dot{width:6px;height:6px;border-radius:50%;background:var(--ui-accent-soft)}.autosave-dot.pending{background:var(--ui-warning-soft)}.autosave-dot.failed{background:var(--ui-danger-soft)}
 
 .model-path-picker{display:flex;align-items:center;gap:8px}.model-path-picker input{flex:1;min-width:0}.model-path-picker button{flex-shrink:0}
+
+.canvas-bar .ui-autocomplete{width:5.5rem}.canvas-bar .ui-autocomplete>input{padding:.1875rem}.section-title>.ui-autocomplete{max-width:9.375rem}.section-title>.ui-autocomplete>input{font-size:.6875rem}

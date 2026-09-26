@@ -1,3 +1,4 @@
+import {AutocompleteSelect} from '@local-ai/ui';
 import {useDraft, useDraftFile} from './useDraft';
 import {ReferenceMedia, uploadReference} from './ReferenceMedia';
 import {PlaybackMark} from './PlaybackMark';
@@ -32,11 +33,11 @@ export function TtsPanel({api, online, configure, submitted, media}: {api:(path:
     await api('/v1/tts/generate?wait=false',{method:'POST',body:JSON.stringify(request)});submitted();
   });}
   return <div className="two-column"><section className="panel"><h2>{t('让文字说话')}</h2>
-    <label>{t('语音模型')}<select value={model} onChange={e=>{setModel(e.target.value);setMode(e.target.value==='breeze-tts2'?'design':'preset');setLanguage('Chinese');setError('');}}><option value="qwen3-tts">Qwen3-TTS</option><option value="breeze-tts2">Breeze TTS 2</option></select></label>
+    <label>{t('语音模型')}<AutocompleteSelect value={model} onChange={e=>{setModel(e.target.value);setMode(e.target.value==='breeze-tts2'?'design':'preset');setLanguage('Chinese');setError('');}}><option value="qwen3-tts">Qwen3-TTS</option><option value="breeze-tts2">Breeze TTS 2</option></AutocompleteSelect></label>
     <label>{t('要朗读的文字')}<textarea rows={6} maxLength={2000} value={text} onChange={e=>setText(e.target.value)}/></label>
-    <label>{t('语言')}<select value={language} onChange={e=>setLanguage(e.target.value)}>{(breeze?['Chinese','English','Auto']:['Chinese','English','Japanese','Korean','German','French','Russian','Portuguese','Spanish','Italian','Auto']).map(l=><option key={l} value={l}>{t(l)}</option>)}</select></label>
-    <label>{t('目标音色')}<select value={mode} onChange={e=>setMode(e.target.value)}><option value={breeze?'design':'preset'}>{breeze?t('文字设计音色'):t('选择预设音色')}</option><option value="reference">{t('使用参考音频')}</option></select></label>
-    {mode==='preset' && <label>{t('预设音色')}<select value={speaker} onChange={e=>setSpeaker(e.target.value)}>{voices.map(v=><option key={v.id} value={v.id}>{t(v.name)} · {t(v.description)}</option>)}</select></label>}
+    <label>{t('语言')}<AutocompleteSelect value={language} onChange={e=>setLanguage(e.target.value)}>{(breeze?['Chinese','English','Auto']:['Chinese','English','Japanese','Korean','German','French','Russian','Portuguese','Spanish','Italian','Auto']).map(l=><option key={l} value={l}>{t(l)}</option>)}</AutocompleteSelect></label>
+    <label>{t('目标音色')}<AutocompleteSelect value={mode} onChange={e=>setMode(e.target.value)}><option value={breeze?'design':'preset'}>{breeze?t('文字设计音色'):t('选择预设音色')}</option><option value="reference">{t('使用参考音频')}</option></AutocompleteSelect></label>
+    {mode==='preset' && <label>{t('预设音色')}<AutocompleteSelect value={speaker} onChange={e=>setSpeaker(e.target.value)}>{voices.map(v=><option key={v.id} value={v.id}>{t(v.name)} · {t(v.description)}</option>)}</AutocompleteSelect></label>}
     {mode==='preset' && voices.find(v=>v.id===speaker)?.preview_url && <button className="button light voice-preview-button" onClick={()=>media(voices.find(v=>v.id===speaker).preview_url,speaker+'.wav')}><PlaybackMark source={voices.find(v=>v.id===speaker).preview_url} size={16} label={t('试听')}/></button>}
     {mode==='reference' && <><ReferenceMedia file={reference} onChange={setReference} disabled={busy} api={api} service="tts"/><p className="muted">{t('建议使用清晰、单人、无音乐的录音。')} 3–30 s</p><label>{breeze?t('参考音频对应文字（必填）'):t('参考音频对应文字（可选）')}<textarea value={referenceText} onChange={e=>setReferenceText(e.target.value)} rows={2}/></label></>}
     {(breeze||mode==='preset') && <label>{breeze?t('音色与表达指令'):t('表达方式（可选）')}<textarea rows={2} value={instruct} onChange={e=>setInstruct(e.target.value)} placeholder={t('例如：年轻温柔的女声，语速稍慢，带着笑意')}/></label>}

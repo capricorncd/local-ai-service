@@ -1,3 +1,4 @@
+import {AutocompleteSelect} from '@local-ai/ui';
 import React, {useSyncExternalStore} from 'react';
 import {invoke, isTauri} from '@tauri-apps/api/core';
 import en from './locales/en.json';
@@ -22,4 +23,4 @@ async function updateSystem(){if(isTauri()){try{systemLanguage=resolveLanguage(a
 window.addEventListener('languagechange',updateSystem);window.addEventListener('focus',()=>{if(preference==='system')void updateSystem();});
 window.addEventListener('storage',e=>{if(e.key==='local-ai-ui-language'){preference=e.newValue==='en'||e.newValue==='zh-CN'||e.newValue==='ja'?e.newValue:'system';notify();}});
 notify();void updateSystem();
-export function LanguageSettings(){const {preference,language,setLanguage}=useLanguage();return <section className="panel settings-panel"><h2>{t('界面语言')}</h2><label>{t('显示语言')}<select value={preference} onChange={e=>setLanguage(e.target.value as LanguagePreference)}><option value="system">{t('跟随系统')}</option>{Object.entries(languageNames).map(([code,name])=><option key={code} value={code}>{name}</option>)}</select></label><p className="muted">{t('当前语言：{0}',languageNames[language])} · {t('立即生效，无需重启。不会更改歌词、提示词或语音合成语言。')}</p></section>;}
+export function LanguageSettings(){const {preference,language,setLanguage}=useLanguage();return <section className="panel settings-panel"><h2>{t('界面语言')}</h2><label>{t('显示语言')}<AutocompleteSelect value={preference} onChange={e=>setLanguage(e.target.value as LanguagePreference)}><option value="system">{t('跟随系统')}</option>{Object.entries(languageNames).map(([code,name])=><option key={code} value={code}>{name}</option>)}</AutocompleteSelect></label><p className="muted">{t('当前语言：{0}',languageNames[language])} · {t('立即生效，无需重启。不会更改歌词、提示词或语音合成语言。')}</p></section>;}

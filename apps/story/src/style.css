@@ -88,3 +88,5 @@ input::placeholder,textarea::placeholder{color:color-mix(in srgb,var(--ui-muted)
 .shot-preset-field{display:flex;flex:1;min-width:0;flex-direction:column;gap:.4375rem}.shot-content .shot-preset-field select,.shot-content .shot-preset-field input{width:100%;font-size:1rem;padding:.4375rem .5rem}.shot-preset-field select{min-height:2.5rem}
 
 .shot-image-drop{position:relative}.shot-image-drop.dragging{outline:.125rem solid var(--ui-accent);outline-offset:.125rem}.shot-image .shot-gallery-empty{border-radius:0;background:transparent;padding:0;cursor:pointer}.shot-gallery-cover>img{border-radius:0}
+
+.agent-panel .ui-autocomplete>input{font-size:.6875rem}.font-size-controls .ui-autocomplete{width:8rem;flex-shrink:0}
