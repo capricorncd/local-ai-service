@@ -300,7 +300,12 @@ function App() {
         const sources = new Set((job.result?.files || []).map(file => file.url));
         if ((player && sources.has(player.source)) || (loadingAudio && sources.has(loadingAudio))) {
             playbackRequest.current?.abort();
-            audioRef.current?.pause();
+            const audio = audioRef.current;
+            if (audio) {
+                audio.pause();
+                audio.removeAttribute('src');
+                audio.load(); // Cancel the media request before asking Windows to move the folder.
+            }
             if (player) URL.revokeObjectURL(player.url);
             setPlayer(null);setPlayingUrl(null);setLoadingAudio(null);
         }

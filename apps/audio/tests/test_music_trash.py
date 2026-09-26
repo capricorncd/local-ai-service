@@ -74,3 +74,31 @@ def test_refuse_unsafe_or_failed_delete(tmp_path, monkeypatch, scenario):
     assert error.value.status_code == 409
     assert folder.is_dir() and manager.job(job_id)
     assert trash.call_count == (1 if scenario == 'failure' else 0)
+
+
+def test_recycle_retries_sharing_violation_only(tmp_path, monkeypatch):
+    operation = Mock(side_effect=[OSError(-2144927704, 'OLE error 0x80270028'), None])
+    sleeps = []
+    monkeypatch.setattr(recycle, '_recycle_once', operation)
+    monkeypatch.setattr(recycle.time, 'sleep', sleeps.append)
+    recycle.recycle_directory(tmp_path)
+    assert operation.call_count == 2 and sleeps == [.15]
+
+
+def test_recycle_persistent_lock_keeps_files_and_explains(tmp_path, monkeypatch):
+    (tmp_path / 'song.wav').write_bytes(b'audio')
+    operation = Mock(side_effect=OSError(-2144927704, 'OLE error 0x80270028'))
+    monkeypatch.setattr(recycle, '_recycle_once', operation)
+    monkeypatch.setattr(recycle.time, 'sleep', lambda _: None)
+    with pytest.raises(OSError, match='仍被占用'):
+        recycle.recycle_directory(tmp_path)
+    assert operation.call_count == 5
+    assert (tmp_path / 'song.wav').read_bytes() == b'audio'
+
+
+def test_recycle_does_not_retry_other_errors(tmp_path, monkeypatch):
+    operation = Mock(side_effect=PermissionError(5, 'Access denied'))
+    monkeypatch.setattr(recycle, '_recycle_once', operation)
+    with pytest.raises(PermissionError):
+        recycle.recycle_directory(tmp_path)
+    assert operation.call_count == 1

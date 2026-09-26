@@ -1,10 +1,36 @@
 """Move generated task directories into the OS trash; never fall back to unlink."""
 import os
+import time
 from pathlib import Path
+
+
+# Shell reports source/destination sharing violations as HRESULTs.
+_SHARING_ERRORS = {32, 33, 0x80070020, 0x80070021, 0x80270027, 0x80270028}
+
+
+def _is_sharing_violation(error):
+    codes = [getattr(error, 'hresult', None), getattr(error, 'winerror', None)]
+    if error.args:
+        codes.append(error.args[0])
+    return any(isinstance(code, int) and (code & 0xffffffff) in _SHARING_ERRORS for code in codes)
 
 
 def recycle_directory(directory):
     directory = Path(directory).resolve(strict=True)
+    for attempt, delay in enumerate((0, .15, .3, .6, 1.2)):
+        if delay:
+            time.sleep(delay)
+        try:
+            _recycle_once(directory)
+            return
+        except Exception as error:
+            if not _is_sharing_violation(error):
+                raise
+            if attempt == 4 or not directory.exists():
+                raise OSError('目录或文件仍被占用，请停止播放或关闭占用该目录的程序后重试。') from error
+
+
+def _recycle_once(directory):
     if os.name != 'nt':
         from send2trash import send2trash
         send2trash(str(directory))
