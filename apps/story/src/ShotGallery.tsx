@@ -14,7 +14,7 @@ export function ShotGallery({pid,shot,jobs,onCover,onDelete,onDownload,onImport}
  return <>
  <div className={'shot-image-drop'+(dragging?' dragging':'')} onDragOver={event=>{event.preventDefault();event.dataTransfer.dropEffect='copy';setDragging(true);}} onDragLeave={event=>{if(!event.currentTarget.contains(event.relatedTarget as Node))setDragging(false);}} onDrop={event=>{event.preventDefault();event.stopPropagation();setDragging(false);void addFiles(Array.from(event.dataTransfer.files));}}>
  <input ref={fileInput} hidden type="file" multiple accept="image/png,image/jpeg,image/webp" onChange={event=>{const files=Array.from(event.target.files||[]);event.target.value='';void addFiles(files);}}/>
- {paths.length?<button className="shot-gallery-cover" aria-label="查看分镜效果图大图" title="查看大图，也可拖入图片添加" onClick={()=>setView(shot.image||paths[0])}><Media pid={pid} path={shot.image||paths[0]}/></button>:<button type="button" className="shot-gallery-empty" disabled={importing} aria-label="导入分镜效果图" title="点击或拖入图片" onClick={()=>fileInput.current?.click()}><ImageIcon size="2rem"/></button>}
+ {paths.length?<button className="shot-gallery-cover" aria-label="查看分镜效果图大图" title="查看大图，也可拖入图片添加" onClick={()=>setView(shot.image||paths[0])}><Media pid={pid} path={shot.image||paths[0]}/></button>:<button type="button" className="shot-gallery-empty" disabled={importing} aria-label="导入分镜效果图" title="点击或拖入图片" onClick={()=>fileInput.current?.click()}><ImageIcon size="2rem"/><small>可以拖动添加</small></button>}
  {importing&&<span className="shot-image-status" role="status">导入中…</span>}
  </div>{importError&&<p className="warning" role="alert">{importError}</p>}
 
