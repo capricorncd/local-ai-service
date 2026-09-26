@@ -130,3 +130,5 @@ aside nav{min-height:0;overflow-y:auto;flex:1}.sidebar-foot{flex-shrink:0;margin
 
 .song-title .song-title-tag{flex-shrink:0;align-self:center;white-space:nowrap;font-weight:500;line-height:1.4;background:var(--ui-raised);color:var(--ui-muted)}
 .song-title .song-title-tag.unplayed{background:var(--ui-accent);color:var(--ui-on-accent);font-weight:600}
+
+.voice-preview-button{margin-top:12px}
