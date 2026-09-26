@@ -39,6 +39,8 @@ def music(cfg, request, output):
         from music_stems import separate_music
         return separate_music(cfg, request, output)
     from music_names import song_titles, song_filename
+    from music_voice import vocal_style
+    request = {**request, 'style': vocal_style(request)}
     titles = request.get('song_titles') or song_titles(request.get('title', ''), request['count'])
     sys.path.insert(0, cfg['runtime_dir'])
     # ComfyUI parses argv at import time. Never pass the worker request path to it.

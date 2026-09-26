@@ -5,7 +5,7 @@ import {t} from './i18n';
 
 export const SongMenuContext=createContext({keepOpen:()=>{},leave:()=>{},register:(_node:HTMLElement)=>()=>{},contains:(_node:Node|null):boolean=>false});
 
-export function SongMoreMenu({children}: {children:ReactNode}) {
+export function SongMoreMenu({children, label, icon}: {children:ReactNode; label?:string; icon?:ReactNode}) {
   const trigger = useRef<HTMLButtonElement>(null);
   const popup = useRef<HTMLDivElement>(null);
   const submenus=useRef(new Set<HTMLElement>());
@@ -35,7 +35,7 @@ export function SongMoreMenu({children}: {children:ReactNode}) {
     window.addEventListener('resize',close);
     return()=>{document.removeEventListener('pointerdown',outside);document.removeEventListener('keydown',escape);window.removeEventListener('scroll',outside,true);window.removeEventListener('resize',close);};
   },[!!position]);
-  return <><button ref={trigger} type="button" className="song-more-trigger" aria-label={t('更多操作')} title={t('更多操作')} aria-haspopup="menu" aria-expanded={!!position} onMouseEnter={()=>show()} onMouseLeave={leave} onClick={()=>position?close():show()} onKeyDown={e=>{if(e.key==='ArrowDown'){e.preventDefault();show(true);}}}><Ellipsis size={20}/></button>{position&&createPortal(<SongMenuContext.Provider value={{keepOpen,leave,register,contains}}><div ref={popup} className="song-more-menu" role="menu" aria-label={t('更多操作')} style={position} onMouseEnter={keepOpen} onMouseLeave={leave} onBlur={e=>{if(!contains(e.relatedTarget as Node))close();}} onClick={e=>{const button=(e.target as Element).closest('button');if(button&&!button.disabled&&!button.hasAttribute('data-menu-keep-open'))close();}} onKeyDown={e=>{
+  return <><button ref={trigger} type="button" className={label ? "button light" : "song-more-trigger"} aria-label={label || t('更多操作')} title={label || t('更多操作')} aria-haspopup="menu" aria-expanded={!!position} onMouseEnter={()=>show()} onMouseLeave={leave} onClick={()=>position?close():show()} onKeyDown={e=>{if(e.key==='ArrowDown'){e.preventDefault();show(true);}}}>{label ? <>{icon}{label}</> : <Ellipsis size={20}/>}</button>{position&&createPortal(<SongMenuContext.Provider value={{keepOpen,leave,register,contains}}><div ref={popup} className="song-more-menu" role="menu" aria-label={label || t('更多操作')} style={position} onMouseEnter={keepOpen} onMouseLeave={leave} onBlur={e=>{if(!contains(e.relatedTarget as Node))close();}} onClick={e=>{const button=(e.target as Element).closest('button');if(button&&!button.disabled&&!button.hasAttribute('data-menu-keep-open'))close();}} onKeyDown={e=>{
     if(!['ArrowDown','ArrowUp','Home','End'].includes(e.key))return;
     e.preventDefault();
     const items=Array.from(e.currentTarget.querySelectorAll<HTMLButtonElement>('button:not(:disabled)'));

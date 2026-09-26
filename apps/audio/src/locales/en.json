@@ -682,5 +682,17 @@
   "摇滚与朋克": "Rock & Punk",
   "节奏布鲁斯与灵魂": "R&B & Soul",
   "地区音乐": "Regional Music",
-  "全部风格": "All styles"
+  "全部风格": "All styles",
+  "等待 API 连接，连接后将自动准备预览。": "Waiting for the API connection. Preview will load automatically once connected.",
+  "重试预览": "Retry preview",
+  "说明": "Information",
+  "风格": "Style",
+  "声音": "Voice",
+  "默认": "Default",
+  "男声": "Male",
+  "女声": "Female",
+  "风格或歌词超过字数上限，请缩短后再生成。": "Style or lyrics exceed the character limit. Shorten them before generating.",
+  "歌谱": "Sheet music",
+  "预览": "Preview",
+  "选择风格后，点击底部按钮应用。": "Select a style, then apply it using the button below."
 }

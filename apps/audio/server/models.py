@@ -161,6 +161,7 @@ class MusicRequest(StrictModel):
     planner_strength: float = Field(1, ge=0, le=3)
     lyrics: str = Field('', max_length=20000)
     style: str = Field('', max_length=4000)
+    vocal_gender: Literal['default', 'male', 'female'] = 'default'
     count: int | None = Field(None, ge=1, le=2)
     seed: int = Field(42, ge=0, le=2**32-2)
     steps: int | None = Field(None, ge=1, le=100)
