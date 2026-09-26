@@ -112,3 +112,9 @@ aside nav{min-height:0;overflow-y:auto;flex:1}.sidebar-foot{flex-shrink:0;margin
 .music-composer-footer>label{margin:0 0 12px}
 .music-composer-footer .music-composer-tools{margin:0}
 .music-composer-body>.section-title{gap:12px}
+
+.config-field-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.config-field-status{display:inline-flex;align-items:center;gap:5px;color:var(--ui-danger);font-size:12px;white-space:nowrap}
+.config-field-issue.invalid .input-with-button input{border:2px solid var(--ui-danger);background:color-mix(in srgb,var(--ui-danger) 6%,var(--ui-input));box-shadow:0 0 0 3px color-mix(in srgb,var(--ui-danger) 10%,transparent)}
+.config-field-issue.pending .config-field-status{color:var(--ui-warning)}
+.config-field-issue.pending .input-with-button input{border-color:var(--ui-warning);background:color-mix(in srgb,var(--ui-warning) 5%,var(--ui-input))}
