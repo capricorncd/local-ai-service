@@ -359,3 +359,18 @@ def test_asset_tags_save_remove_and_history(service):
     assert c.patch(b+'/assets/'+aid,json={'revision':1,'data':{'tags':['主角']}}).status_code==200
     assert c.get(b).json()['assets'][0]['tags']==['主角']
     assert c.get(b+'/history/00000001').json()['project']['assets'][0]['tags']==['主角','第一季']
+
+
+def test_character_skills_save_validate_and_history(service):
+    c,p,_=service;b='/v1/projects/'+p['id']
+    r=c.post(b+'/assets',json={'revision':0,'data':{'name':'角色','skills':[{'name':'闪步','description':'短距离突进','video_prompt':'屈膝后向前突进，拖出残影，站稳收势。','rating':5}]}})
+    assert r.status_code==200,r.text
+    asset=r.json()['project']['assets'][0];aid=asset['id'];skill=asset['skills'][0]
+    assert skill['id'] and skill['rating']==5
+    assert c.get(b).json()['assets'][0]['skills'][0]['video_prompt']==skill['video_prompt']
+    for invalid in [6,-1,1.5]:
+        assert c.patch(b+'/assets/'+aid,json={'revision':1,'data':{'skills':[{**skill,'rating':invalid}]}}).status_code==422
+    assert c.patch(b+'/assets/'+aid,json={'revision':1,'data':{'skills':[skill,skill]}}).status_code==422
+    assert c.patch(b+'/assets/'+aid,json={'revision':1,'data':{'skills':[]}}).status_code==200
+    assert c.get(b).json()['assets'][0]['skills']==[]
+    assert c.get(b+'/history/00000001').json()['project']['assets'][0]['skills']==[skill]

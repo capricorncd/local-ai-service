@@ -49,6 +49,15 @@ class Chapter(BaseModel):
     episodes: list[Episode] = Field(default_factory=list)
 
 
+class CharacterSkill(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+    id: str = Field(default_factory=uid, min_length=1)
+    name: str = Field(default='新技能', min_length=1, max_length=200)
+    description: str = ''
+    video_prompt: str = ''
+    rating: int = Field(default=0, ge=0, le=5, strict=True)
+
+
 class Asset(BaseModel):
     id: str = Field(default_factory=uid)
     name: str = Field(min_length=1, max_length=200)
@@ -56,6 +65,7 @@ class Asset(BaseModel):
     rating: int = Field(default=0, ge=0, le=5, strict=True)
     deprecated: bool = False
     tags: list[str] = Field(default_factory=list)
+    skills: list[CharacterSkill] = Field(default_factory=list)
     description: str = ''
     gender: str = ''
     body: str = ''
@@ -89,7 +99,7 @@ class Project(BaseModel):
     def check(self):
         if self.width * self.height > 2097152:
             raise ValueError('画面面积不能超过 2,097,152 像素')
-        ids = [self.id] + [a.id for a in self.assets]
+        ids = [self.id] + [a.id for a in self.assets] + [skill.id for a in self.assets for skill in a.skills]
         assets = {a.id for a in self.assets}
         for c in self.chapters:
             ids.append(c.id)
