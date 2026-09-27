@@ -144,3 +144,12 @@ aside nav{min-height:0;overflow-y:auto;flex:1}.sidebar-foot{flex-shrink:0;margin
 .music-workspace .music-song .song-created-meta{margin:10px 0 0;font-size:11px}
 
 label>.ui-autocomplete{margin-top:.5625rem}.library-tools>.ui-autocomplete{width:11.25rem;flex-shrink:0}.voice-choice .ui-autocomplete{width:auto;min-width:5.9375rem;margin:0}.song-filter-popover .ui-autocomplete{margin-top:.375rem}
+
+
+/* Song cards need room for ratings and file actions, even in a narrow pane. */
+.music-workspace .music-song{min-width:0;margin:0}
+.music-song>.actions,.music-song .song-annotations{flex-wrap:wrap}
+.music-song .song-stars,.music-song .song-favorite{flex-shrink:0}
+.music-song .song-title{flex-wrap:nowrap}
+.music-song .song-title>strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.music-song-heading>.song-state,.music-song-heading>.song-more-trigger{flex-shrink:0}

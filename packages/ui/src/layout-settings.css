@@ -4,4 +4,4 @@
 .ui-maximize-setting{display:flex;flex-direction:row!important;align-items:center;gap:.5rem}.ui-maximize-setting>input{width:auto!important}
 [data-ui-app] input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]),[data-ui-app] textarea,[data-ui-app] select{font-size:var(--ui-control-font-size,1rem)!important}
 [data-ui-app=image] .result{min-width:var(--ui-resource-min-width,12rem);max-width:none;flex:1 0 var(--ui-resource-min-width,12rem)}
-[data-ui-app=audio] .music-song-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,var(--ui-resource-min-width,12rem)),1fr));gap:1rem;align-items:start}
+[data-ui-app=audio] .music-song-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,max(26rem,var(--ui-resource-min-width,12rem))),1fr));gap:1rem;align-items:start}
