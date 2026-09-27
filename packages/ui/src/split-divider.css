@@ -1,0 +1,3 @@
+.ui-split-divider{position:relative;min-width:0;align-self:stretch;cursor:col-resize;touch-action:none;user-select:none;background:transparent;outline:none}
+.ui-split-divider::after{content:"";position:absolute;top:0;bottom:0;left:50%;width:.0625rem;background:var(--ui-border);transform:translateX(-50%)}
+.ui-split-divider:hover::after,.ui-split-divider:focus-visible::after,.ui-split-divider:active::after{width:.1875rem;background:var(--ui-accent)}
