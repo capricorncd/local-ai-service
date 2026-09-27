@@ -1,3 +1,5 @@
+import {applyStartupWindow} from './startupWindow';
+import {initializeUIPreferences} from './uiPreferences';
 import {AssetLibraryCard,AssetRating,EpisodeAssets,AssetTags} from './components';
 import {ShotPromptPreview,type PromptPlan} from './ShotPromptPreview';
 import {AutocompleteSelect,SplitDivider} from '@local-ai/ui';
@@ -117,4 +119,6 @@ function App(){
 }
 initializeTheme('story');
 initializeTypography();
+initializeUIPreferences();
+void applyStartupWindow().catch(error=>console.error("无法在启动时最大化窗口",error));
 createRoot(document.getElementById('root')!).render(<App/>);

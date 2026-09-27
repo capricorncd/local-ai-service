@@ -1,1 +1,13 @@
-{"identifier":"default","description":"Local window and file picker","windows":["main"],"permissions":["core:default","dialog:allow-open","dialog:allow-save"]}
+{
+  "identifier": "default",
+  "description": "Local window and file picker",
+  "windows": [
+    "main"
+  ],
+  "permissions": [
+    "core:default",
+    "dialog:allow-open",
+    "dialog:allow-save",
+    "core:window:allow-maximize"
+  ]
+}

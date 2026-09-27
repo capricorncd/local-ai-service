@@ -4,7 +4,7 @@ import {AppearanceSettings,Button} from '../../../packages/ui/src/index';
 import {DialogActions} from '../../../packages/ui/src/Dialog';
 import {ModelConfiguration,type Result} from './ModelConfiguration';
 
-const tabs=[['models','模型文件'],['runtime','运行环境'],['appearance','外观'],['connection','服务连接']] as const;
+const tabs=[['models','模型文件'],['runtime','运行环境'],['appearance','外观设置'],['connection','服务连接']] as const;
 export function ImageSettings({config,onSaved,token,setToken,onConnect,notify}:{config:Result|null;onSaved:(value:Result)=>void;token:string;setToken:(value:string)=>void;onConnect:()=>void;notify:(value:unknown)=>void}){
   const [active,setActive]=useState<string>('models');
   return <div className="image-settings">

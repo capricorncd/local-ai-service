@@ -26,3 +26,5 @@ export {Autocomplete, AutocompleteSelect} from './Autocomplete';
 export {InputTag,type InputTagProps} from './InputTag';
 
 export {SplitDivider} from './SplitDivider';
+
+export {initializeUIPreferences,getUIPreferences} from './uiPreferences';

@@ -1,0 +1,8 @@
+import './layout-settings.css';
+import {useState,useSyncExternalStore} from 'react';
+import {defaultUIPreferences,getUIPreferences,setUIPreferences,subscribeUIPreferences,type UIPreferences} from './uiPreferences';
+export function LayoutSettings(){
+ const value=useSyncExternalStore(subscribeUIPreferences,getUIPreferences);const [error,setError]=useState('');
+ const update=(next:UIPreferences)=>{try{setUIPreferences(next);setError('');}catch{setError('无法保存外观设置，请检查本机存储。');}};
+ return <section className="settings-card"><div className="typography-heading"><h2>界面布局</h2><button type="button" onClick={()=>update(defaultUIPreferences)}>恢复默认</button></div><label className="ui-maximize-setting"><input type="checkbox" checked={value.maximizeOnStart} onChange={e=>update({...value,maximizeOnStart:e.target.checked})}/>启动时最大化窗口</label><p className="hint">下次启动桌面应用时生效。</p><label>文本框字体大小<div className="ui-setting-range"><input aria-label="文本框字体大小" type="range" min={.875} max={1.5} step={.0625} value={value.inputFontSize} onChange={e=>update({...value,inputFontSize:+e.target.value})}/><output>{value.inputFontSize} rem</output></div></label><textarea aria-label="文本框字号预览" defaultValue="保持剧情和人物关系，精炼动作与对白，增强可视化表现。"/><label>资源卡片最小宽度<div className="ui-setting-range"><input aria-label="资源卡片最小宽度" type="range" min={8} max={24} step={.5} value={value.assetColumnWidth} onChange={e=>update({...value,assetColumnWidth:+e.target.value})}/><output>{value.assetColumnWidth} rem</output></div></label><p className="hint">按最小列宽自动计算列数，剩余空间均分，实际卡片可更宽；空间不足时缩为单列。文本框默认 1 rem，列表默认 12 rem；随基础字号缩放，立即生效并保存在本机。</p>{error&&<p role="alert">{error}</p>}</section>;
+}

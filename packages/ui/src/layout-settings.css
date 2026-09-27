@@ -1,0 +1,7 @@
+.settings-card:has(.ui-setting-range){padding:1.25rem;border:.0625rem solid var(--ui-border);border-radius:.5rem;background:var(--ui-surface);display:flex;flex-direction:column;gap:1rem;margin-top:1rem}
+.settings-card:has(.ui-setting-range) .typography-heading{display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.ui-setting-range{display:flex;align-items:center;gap:1rem}.ui-setting-range>input{flex:1;min-width:0}.ui-setting-range>output{min-width:6rem;text-align:right;white-space:nowrap}
+.ui-maximize-setting{display:flex;flex-direction:row!important;align-items:center;gap:.5rem}.ui-maximize-setting>input{width:auto!important}
+[data-ui-app] input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]),[data-ui-app] textarea,[data-ui-app] select{font-size:var(--ui-control-font-size,1rem)!important}
+[data-ui-app=image] .result{min-width:var(--ui-resource-min-width,12rem);max-width:none;flex:1 0 var(--ui-resource-min-width,12rem)}
+[data-ui-app=audio] .music-song-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,var(--ui-resource-min-width,12rem)),1fr));gap:1rem;align-items:start}

@@ -5,7 +5,7 @@ import {AppearanceSettings} from '../../../packages/ui/src/index';
 import {useEffect,useState} from 'react';
 import {api} from './api';
 import {Settings} from './types';
-const settingsTabs=[['appearance','外观'],['storage','项目存储'],['agent','文字 Agent'],['image','图片应用'],['audio','音频应用'],['mobile','手机访问']] as const;
+const settingsTabs=[['appearance','外观设置'],['storage','项目存储'],['agent','文字 Agent'],['image','图片应用'],['audio','音频应用'],['mobile','手机访问']] as const;
 type SettingsTab=typeof settingsTabs[number][0];
 export default function SettingsPanel({report}:{report:(e:unknown)=>void}){
  const [activeTab,setActiveTab]=useState<SettingsTab>('appearance');

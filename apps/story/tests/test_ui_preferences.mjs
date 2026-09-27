@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';import {readFileSync} from 'node:fs';import ts from 'typescript';
+const source=readFileSync(new URL('../../../packages/ui/src/uiPreferences.ts',import.meta.url),'utf8');const output=ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
+const values=new Map(),css=new Map();globalThis.localStorage={getItem:key=>values.get(key)??null,setItem:(key,value)=>values.set(key,value)};globalThis.document={documentElement:{dataset:{},style:{setProperty:(key,value)=>css.set(key,value)}}};globalThis.window={addEventListener:()=>{}};
+const m={};new Function('exports',output)(m);
+assert.deepEqual(m.parseUIPreferences(null),{inputFontSize:1,assetColumnWidth:12,maximizeOnStart:false});assert.deepEqual(m.parseUIPreferences('bad'),m.defaultUIPreferences);
+assert.deepEqual(m.parseUIPreferences('{"inputFontSize":99,"assetColumnWidth":0}'),{inputFontSize:1.5,assetColumnWidth:8,maximizeOnStart:false});
+m.initializeUIPreferences();m.setUIPreferences({inputFontSize:1.25,assetColumnWidth:16,maximizeOnStart:true});assert.equal(css.get('--story-input-font-size'),'1.25rem');assert.equal(css.get('--story-asset-column-width'),'16rem');m.initializeUIPreferences();assert.equal(m.getUIPreferences().assetColumnWidth,16);
+assert.equal(m.getUIPreferences().maximizeOnStart,true);assert.equal(m.parseUIPreferences('{"maximizeOnStart":"false"}').maximizeOnStart,false);
+m.initializeUIPreferences('audio');assert.equal(m.getUIPreferences().maximizeOnStart,false);m.setUIPreferences({inputFontSize:1,assetColumnWidth:20,maximizeOnStart:false});m.initializeUIPreferences('story');assert.equal(m.getUIPreferences().maximizeOnStart,true);
+const before=m.getUIPreferences();globalThis.localStorage.setItem=()=>{throw Error('full');};assert.throws(()=>m.setUIPreferences(m.defaultUIPreferences));assert.equal(m.getUIPreferences(),before);
+console.log('UI preferences: defaults, bounds, persistence, CSS values and storage failure passed');

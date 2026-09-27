@@ -1,3 +1,5 @@
+import {initializeUIPreferences,getUIPreferences} from '@local-ai/ui';
+import {getCurrentWindow} from '@tauri-apps/api/window';
 import {AutocompleteSelect} from '@local-ai/ui';
 import {configFieldIssues} from './configFieldIssues';
 import {Dialog} from '../../../packages/ui/src/Dialog';
@@ -515,4 +517,6 @@ function App() {
  </div></PlaybackLoadingContext.Provider></PlaybackContext.Provider></ApiReadyContext.Provider>;
 }
 initializeTheme('audio');
+initializeUIPreferences('audio');
+if(isTauri()&&getUIPreferences().maximizeOnStart)void getCurrentWindow().maximize().catch(error=>console.error('无法在启动时最大化窗口',error));
 createRoot(document.getElementById('root')!).render(<App />);
