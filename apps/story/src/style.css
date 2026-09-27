@@ -170,3 +170,5 @@ input::placeholder,textarea::placeholder{color:color-mix(in srgb,var(--ui-muted)
 .ui-setting-range{display:flex;align-items:center;gap:1rem}.ui-setting-range>input{flex:1;min-width:0}.ui-setting-range>output{min-width:6rem;text-align:right;white-space:nowrap}
 
 .ui-maximize-setting{flex-direction:row;align-items:center;gap:.5rem}
+
+.search:focus-within{border-color:var(--ui-accent);box-shadow:0 0 0 .125rem var(--ui-shadow)}.search>svg{flex-shrink:0}.search input:focus,.search input:focus-visible{outline:none;box-shadow:none;border:0}
