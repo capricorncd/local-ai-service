@@ -172,3 +172,5 @@ input::placeholder,textarea::placeholder{color:color-mix(in srgb,var(--ui-muted)
 .ui-maximize-setting{flex-direction:row;align-items:center;gap:.5rem}
 
 .search:focus-within{border-color:var(--ui-accent);box-shadow:0 0 0 .125rem var(--ui-shadow)}.search>svg{flex-shrink:0}.search input:focus,.search input:focus-visible{outline:none;box-shadow:none;border:0}
+
+.asset-list-options{margin-left:auto;display:flex;align-items:center;gap:.875rem;flex-wrap:wrap}.asset-list-options>.asset-sort{margin-left:0}.asset-status-filter{display:flex;flex-direction:row;align-items:center;gap:.5rem;white-space:nowrap}.asset-status-filter>.ui-autocomplete{width:7rem}
