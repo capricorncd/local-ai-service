@@ -280,7 +280,7 @@ def create_app(home: Path):
         # image application's fidelity mode prepends this exact instruction.
         from shot_prompt import PREFIXES
         actual=(PREFIXES[mode]+'\n' if PREFIXES[mode] else '')+payload['prompt']
-        record={'schema_version':1,'asset_name':asset.name if asset else '分镜效果图','asset_type':asset.kind if asset else 'image','generation_prompt':actual,
+        record={'schema_version':1,'asset_name':asset.name if asset else '分镜效果图','asset_type':asset.kind if asset and asset.kind!='other' else 'image','generation_prompt':actual,
             'generation_prompt_status':'exact','generation_prompt_source':'Local AI Image /v1/jobs; mode prefix included when applicable','generation_mode':'external','reference_images':reference_records}
         if asset:
             record.update(setting_description=description,consistency_constraints=[asset.constraints] if asset.constraints else [],description_source='用户填写的设定描述，生成后须人工核对',observed_differences=[])

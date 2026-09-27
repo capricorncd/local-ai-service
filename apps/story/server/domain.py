@@ -52,7 +52,10 @@ class Chapter(BaseModel):
 class Asset(BaseModel):
     id: str = Field(default_factory=uid)
     name: str = Field(min_length=1, max_length=200)
-    kind: Literal['character', 'scene', 'prop'] = 'character'
+    kind: Literal['character', 'scene', 'prop', 'other'] = 'character'
+    rating: int = Field(default=0, ge=0, le=5, strict=True)
+    deprecated: bool = False
+    tags: list[str] = Field(default_factory=list)
     description: str = ''
     gender: str = ''
     body: str = ''

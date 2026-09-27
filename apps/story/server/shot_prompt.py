@@ -20,7 +20,7 @@ def text(value):
 def role_for(asset):
     if asset.kind == 'character' and re.search(r'路人|群演|背景乘客|背景人物|仅作.{0,8}群体', asset.name + asset.constraints):
         return '背景人物'
-    return {'character': '角色', 'scene': '场景', 'prop': '道具'}[asset.kind]
+    return {'character': '角色', 'scene': '场景', 'prop': '道具', 'other': '其他素材'}[asset.kind]
 
 
 def clean(value, scene=False):

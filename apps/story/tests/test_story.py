@@ -316,3 +316,46 @@ def test_storyboard_max_edge_setting_and_generation(service, monkeypatch):
     assert storyboard_image_size(768,1376,1024)==(576,1024)
     assert storyboard_image_size(512,512,1024)==(512,512)
     assert storyboard_image_size(2048,256,1024)==(1024,256)
+
+
+def test_asset_rating_persists_validates_and_restores(service):
+    c,p,store=service;b='/v1/projects/'+p['id']
+    r=c.post(b+'/assets',json={'revision':0,'data':{'name':'角色'}})
+    assert r.status_code==200
+    aid=r.json()['ids'][0]
+    assert r.json()['project']['assets'][0]['rating']==0
+    r=c.patch(b+'/assets/'+aid,json={'revision':1,'data':{'rating':4}})
+    assert r.status_code==200
+    assert c.get(b).json()['assets'][0]['rating']==4
+    for invalid in [-1,6,2.5,True]:
+        assert c.patch(b+'/assets/'+aid,json={'revision':2,'data':{'rating':invalid}}).status_code==422
+    assert c.get(b).json()['revision']==2
+    assert c.post(b+'/history/00000001/restore',json={'revision':2}).status_code==200
+    assert c.get(b).json()['assets'][0]['rating']==0
+
+
+def test_other_asset_deprecation_preserves_references(service):
+    c,p,store=service;b='/v1/projects/'+p['id']
+    r=c.post(b+'/assets',json={'revision':0,'data':{'name':'参考素材','kind':'other'}})
+    assert r.status_code==200
+    aid=r.json()['ids'][0]
+    assert r.json()['project']['assets'][0]['deprecated'] is False
+    eid=p['chapters'][0]['episodes'][0]['id']
+    assert c.post(b+'/episodes/'+eid+'/shots',json={'revision':1,'data':{'asset_ids':[aid]}}).status_code==200
+    r=c.patch(b+'/assets/'+aid,json={'revision':2,'data':{'deprecated':True}})
+    assert r.status_code==200
+    saved=c.get(b).json()
+    assert saved['assets'][0]['kind']=='other' and saved['assets'][0]['deprecated'] is True
+    assert saved['chapters'][0]['episodes'][0]['shots'][0]['asset_ids']==[aid]
+    assert c.patch(b+'/assets/'+aid,json={'revision':3,'data':{'deprecated':False}}).status_code==200
+
+
+def test_asset_tags_save_remove_and_history(service):
+    c,p,_=service;b='/v1/projects/'+p['id']
+    r=c.post(b+'/assets',json={'revision':0,'data':{'name':'标签测试','tags':['主角','第一季']}})
+    assert r.status_code==200
+    aid=r.json()['ids'][0]
+    assert c.get(b).json()['assets'][0]['tags']==['主角','第一季']
+    assert c.patch(b+'/assets/'+aid,json={'revision':1,'data':{'tags':['主角']}}).status_code==200
+    assert c.get(b).json()['assets'][0]['tags']==['主角']
+    assert c.get(b+'/history/00000001').json()['project']['assets'][0]['tags']==['主角','第一季']

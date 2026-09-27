@@ -27,3 +27,12 @@ export async function download(blob:Blob,name:string){
 }
 
 export function setMobileToken(token:string){localStorage.setItem("story-mobile-token",token);connection={base:location.origin,token};}
+
+export async function revealAssetFile(pid:string,path:string){
+ if(!isTauri())throw Error('请在桌面应用中打开所在目录');
+ if(!/^media\/[a-f0-9]{32}\.(png|jpg|jpeg|webp|wav|mp3|ogg|flac|m4a)$/.test(path))throw Error('此资产尚未添加本地文件');
+ const projects=await api<{id:string;directory:string}[]>('/v1/projects');
+ const project=projects.find(item=>item.id===pid);
+ if(!project)throw Error('项目目录不可用');
+ await invoke('reveal_file',{path:project.directory+'/'+path});
+}
