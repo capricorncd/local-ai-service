@@ -374,3 +374,41 @@ def test_character_skills_save_validate_and_history(service):
     assert c.patch(b+'/assets/'+aid,json={'revision':1,'data':{'skills':[]}}).status_code==200
     assert c.get(b).json()['assets'][0]['skills']==[]
     assert c.get(b+'/history/00000001').json()['project']['assets'][0]['skills']==[skill]
+
+
+def test_asset_rename_syncs_mentions_and_preserves_history(service):
+    c, p, store = service
+    from domain import CharacterSkill
+    project = store.load(p['id'])
+    a = Asset(name='林夏')
+    other = Asset(name='林夏的包', kind='prop')
+    same = Asset(name='林夏')
+    a.skills = [CharacterSkill(video_prompt=f'@[{a.name}](asset:{a.id}) 伸手')]
+    project.assets = [a, other, same]
+    episode = project.chapters[0].episodes[0]
+    original = f'@[{a.name}](asset:{a.id}) 与 @[{same.name}](asset:{same.id})，@林夏的包；@林夏'
+    episode.script = original
+    episode.shots = [Shot(description=original, asset_ids=[a.id, other.id])]
+    project = store.save(project.id, project)
+    a = project.assets[0]
+    a.name = '新名称'
+    response = c.put('/v1/projects/'+project.id, json=project.model_dump())
+    assert response.status_code == 200, response.text
+    saved = response.json()
+    text = saved['chapters'][0]['episodes'][0]['script']
+    assert f'@[新名称](asset:{a.id})' in text
+    assert f'@[林夏](asset:{same.id})' in text
+    assert '@林夏的包；@林夏' in text
+    assert saved['assets'][0]['skills'][0]['video_prompt'].startswith('@[新名称]')
+    assert saved['chapters'][0]['episodes'][0]['shots'][0]['asset_ids'] == [a.id, other.id]
+    assert store.history(project.id, '00000001')['project']['chapters'][0]['episodes'][0]['script'] == original
+
+
+def test_unique_legacy_mentions_upgrade_without_prefix_collision():
+    from asset_references import sync_asset_references
+    a, bag = Asset(name='林夏'), Asset(name='林夏的包')
+    old = Project(name='测试', assets=[a, bag], chapters=[Chapter(episodes=[Episode(script='@林夏的包 @林夏 走来，林夏')])])
+    new = old.model_copy(deep=True)
+    new.assets[0].name = '夏'
+    sync_asset_references(new, old)
+    assert new.chapters[0].episodes[0].script == f'@林夏的包 @[夏](asset:{a.id}) 走来，林夏'

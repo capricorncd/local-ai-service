@@ -58,7 +58,7 @@ function App(){
  async function switchProject(id:string){await flush();selectProject(await api<Project>('/v1/projects/'+id));}
  async function openProject(){const result=await post<Project>('/v1/projects/open',{directory,name:opening?null:name});selectProject(result);setCreating(false);setDirectory('');setName('');refresh().catch(report);}
  function updateEpisode(fn:(e:Episode)=>void){edit(p=>{const ep=p.chapters.flatMap(c=>c.episodes).find(x=>x.id===eid);if(ep)fn(ep);});}
- function updateAsset(values:Partial<Asset>){edit(p=>{const a=p.assets.find(x=>x.id===assetId);if(a){if(values.name!==undefined&&values.name!==a.name)p.chapters.forEach(c=>c.episodes.forEach(e=>e.shots.forEach(s=>{if(s.speaker===a.name)s.speaker=values.name!;if(s.asset_ids.includes(a.id))s.description=s.description.replaceAll('@'+a.name,'@'+values.name);})));Object.assign(a,values);}});}
+ function updateAsset(values:Partial<Asset>){edit(p=>{const a=p.assets.find(x=>x.id===assetId);if(a)Object.assign(a,values);});}
  function updateShot(id:string,values:Partial<Shot>){updateEpisode(e=>{const shot=e.shots.find(s=>s.id===id);if(shot)Object.assign(shot,values);});}
  function named(title:string,value:string,apply:(v:string)=>void){setRename({title,value,apply});}
  async function runAgent(mode:'rewrite'|'shots'){

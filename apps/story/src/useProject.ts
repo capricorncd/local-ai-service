@@ -1,3 +1,4 @@
+import {syncAssetReferences} from './assetReferences';
 import {useEffect,useRef,useState} from 'react';
 import {isTauri} from '@tauri-apps/api/core';
 import {getCurrentWindow} from '@tauri-apps/api/window';
@@ -17,7 +18,7 @@ export function useProject(onError:(e:unknown)=>void){
   const load=(p:Project|null)=>{current.current=p;saved.current=p;setProject(p);setStatus('已保存');};
   const edit=(fn:(p:Project)=>void)=>{
     if(!current.current)return;
-    const next=structuredClone(current.current);fn(next);
+    const next=structuredClone(current.current);fn(next);syncAssetReferences(next,current.current);
     if(sameProjectContent(next,current.current))return;
     current.current=next;setProject(next);
     if(!flight.current&&sameProjectContent(next,saved.current)){

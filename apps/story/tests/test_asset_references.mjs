@@ -1,0 +1,12 @@
+import {build} from 'esbuild';
+import assert from 'node:assert/strict';
+const result=await build({entryPoints:['apps/story/src/assetReferences.ts'],bundle:true,write:false,format:'esm',platform:'node'});
+const {syncAssetReferences}=await import('data:text/javascript;base64,'+Buffer.from(result.outputFiles[0].text).toString('base64'));
+const old={style:'',assets:[{id:'a',name:'甲',description:'',constraints:'',skills:[{video_prompt:'@[甲](asset:a)',description:''}]},{id:'b',name:'甲包',description:'',constraints:''}],chapters:[{episodes:[{script:'@[旧名](asset:a) @甲包 @甲',shots:[{description:'@[甲](asset:a)',scene:'',dialogue:'',sound:'',subtitle:'',speaker:'甲',asset_ids:['a']}]}]}]};
+const next=structuredClone(old);next.assets[0].name='乙';syncAssetReferences(next,old);
+assert.equal(next.chapters[0].episodes[0].script,'@[乙](asset:a) @甲包 @[乙](asset:a)');
+assert.equal(next.assets[0].skills[0].video_prompt,'@[乙](asset:a)');
+assert.equal(next.chapters[0].episodes[0].shots[0].speaker,'乙');
+assert.deepEqual(next.chapters[0].episodes[0].shots[0].asset_ids,['a']);
+assert.equal(old.assets[0].name,'甲');
+console.log('Asset reference synchronization passed');

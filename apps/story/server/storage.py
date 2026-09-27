@@ -1,3 +1,4 @@
+from asset_references import sync_asset_references
 import shutil
 import sqlite3
 from contextlib import closing
@@ -131,6 +132,7 @@ class Store:
             if project.id != id or project.revision != old.revision:
                 raise HTTPException(409, '项目已在其他窗口修改，请保留当前草稿后重新打开项目')
             project = project.model_copy(deep=True)
+            sync_asset_references(project, old)
             project.name = project.name.strip() or project.id
             if project.model_dump(exclude={'revision', 'updated'}) == old.model_dump(exclude={'revision', 'updated'}):
                 return old
