@@ -116,10 +116,12 @@
 
 ## Python 调用示例
 
+设置 `STORY_APP_ROOT` 为运行应用的根目录。完整创作流程见 [外部 Agent Skill](../skills/story-agent/SKILL.md)。
+
 ```python
 from pathlib import Path
 import os, requests
-token = (Path(os.environ['APPDATA'])/'studio.local-ai.story/api-token').read_text().strip()
+token = (Path(os.environ['STORY_APP_ROOT'])/'data/story/api-token').read_text().strip()
 s = requests.Session()
 s.headers['Authorization'] = 'Bearer ' + token
 base = 'http://127.0.0.1:19878'

@@ -22,6 +22,7 @@
 
 正文、分镜、资产文字和完整历史保存在应用数据目录的 `story.sqlite3` 中，当前版本与历史在同一事务内保存。素材保存在项目的 `media/`，生成任务记录在 `jobs/`。未指定目录时使用设置中的默认目录，未设置则使用应用数据目录的 `projects/<项目ID>`。已有 `projects.json` / `story.json` 与历史会在读取时迁入数据库，原文件保留备份，此后不再作为正文存储。备份项目需包含数据库和素材目录。
 
+- [外部 AI Agent 操作 Skill](skills/story-agent/SKILL.md)：将整个 `skills/story-agent` 文件夹交给其他 AI，按需读取附带参考文档，通过 API 创建与编辑故事和分镜。
 - [Agent API 与调用示例](docs/API.md)
 - [文字分镜 Skill](skills/comic-script/SKILL.md)
 

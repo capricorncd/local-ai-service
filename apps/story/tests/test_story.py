@@ -167,7 +167,7 @@ def test_agent_receives_skill_and_selection_only(service,monkeypatch):
     monkeypatch.setattr('integrations.httpx.Client',lambda **kwargs:Original(transport=httpx.MockTransport(handle),**kwargs))
     r=c.post('/v1/projects/'+p['id']+'/agent',json={'mode':'rewrite','content':'他很害怕。','instruction':'改为可见动作'})
     assert r.json()['text']=='△ 陈墨攥紧手电筒。'
-    assert 'AI 漫剧文字分镜' in calls[0]['messages'][0]['content']
+    assert (Path(__file__).resolve().parents[1]/'skills/comic-script/SKILL.md').read_text('utf-8') in calls[0]['messages'][0]['content']
     assert json.loads(calls[0]['messages'][1]['content'])['待处理正文']=='他很害怕。'
     assert c.get('/v1/projects/'+p['id']).json()['revision']==0
 
